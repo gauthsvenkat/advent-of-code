@@ -23,9 +23,8 @@ for line in input:
     num_common = len(common_numbers)
     agg += int(2 ** (num_common - 1)) if num_common else 0
 
-    for r in range(scratchcard_count[card_number]):
-        for i in range(num_common):
-            scratchcard_count[card_number + i + 1] += 1
+    for i in range(num_common):
+        scratchcard_count[card_number + i + 1] += scratchcard_count[card_number]
 
 print(agg)
 print(sum(scratchcard_count.values()))
