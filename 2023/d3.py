@@ -1,72 +1,28 @@
 import sys
+import re
 
-input = [list(line.strip()) for line in sys.stdin]
-input = [line for line in input if line]
-num_row = len(input)
-num_col = len(input[0])
+# (row, col) : char
+map = {}
 
-# Make an empty mask (we can use this to make a mask of the spots
-# that are valid
-symbol_mask = [["."] * len(line) for line in input]
+# expression for finding numbers of any length
+number_expr = re.compile(r"\d+")
+# expression for finding symbols
+symbol_expr = re.compile(r"[^a-zA-Z0-9.]")
 
-f = lambda c: "M" if c.isdigit() else "."
+for row, line in enumerate([line.strip() for line in sys.stdin]):
+    if number_spans := [m.span() for m in number_expr.finditer(line)]:
+        for col_s, col_e in number_spans:
+            map[(row, col_s)] = line[col_s:col_e]
 
+    if symbol_starts := [m.start() for m in symbol_expr.finditer(line)]:
+        for col in symbol_starts:
+            map[(row, col)] = line[col]
 
-def propagate_mask(mask, input, row, col):
-    mask[row][col] = f(input[row][col])
+def get_numbers_near_coordinate(coords_and_nums, coord):
+    for (x,y), num in coords_and_nums:
+        for 
 
-    # Check right
-    for col_offset, char in enumerate(input[row][col:]):
-        if char == ".":
-            break
-        mask[row][col + col_offset] = f(input[row][col + col_offset])
-
-    # Check left
-    for col_offset, char in enumerate(input[row][:col+1][::-1], start=1):
-        if char == ".":
-            break
-        mask[row][col - col_offset] = f(input[row][col - col_offset])
-
-    return mask
-
-
-# from top to bottom
-for row, line in enumerate(input):
-    # from left to right
-    for col, char in enumerate(line):
-        # if characters is not a digit or the period character
-        # then it is a special character
-        # and we make a mask over its area of influence
-        if not (char.isdigit() or (char == ".")):
-            if row != 0:  # up
-                symbol_mask = propagate_mask(symbol_mask, input, row - 1, col)
-            if row != num_row - 1:  # down
-                symbol_mask = propagate_mask(symbol_mask, input, row + 1, col)
-            if col != 0:  # left
-                symbol_mask = propagate_mask(symbol_mask, input, row, col - 1)
-            if col != num_col - 1:  # right
-                symbol_mask = propagate_mask(symbol_mask, input, row, col + 1)
-            if row != 0 and col != 0:  # up left
-                symbol_mask = propagate_mask(symbol_mask, input, row - 1, col - 1)
-            if row != 0 and col != num_col - 1:  # up right
-                symbol_mask = propagate_mask(symbol_mask, input, row - 1, col + 1)
-            if row != num_row - 1 and col != 0:  # down left
-                symbol_mask = propagate_mask(symbol_mask, input, row + 1, col - 1)
-            if row != num_row - 1 and col != num_col - 1:  # down right
-                symbol_mask = propagate_mask(symbol_mask, input, row + 1, col + 1)
-
-input = [
-    [char if symbol_mask[row][col] == "M" else "." for col, char in enumerate(line)]
-    for row, line in enumerate(input)
-]
-
-for line in input:
-    print(line)
-
-numbers = [
-    int(number) for line in input for number in "".join(line).split(".") if number
-]
-
-print(numbers)
-
-print(sum(numbers))
+# Loop over all the symbols
+for (x,y), char in [_ for _ in map.items() if not _[1].isdigit()]:
+    # Find all the numbers around the symbol
+    numbers = [num for (x,y), num in [_ for _ in map.items() if _[1].isdigit()] if ]
