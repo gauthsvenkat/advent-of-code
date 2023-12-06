@@ -1,5 +1,6 @@
-import sys
+import math
 import re
+import sys
 
 # (row, col) : char
 map = {}
@@ -18,11 +19,38 @@ for row, line in enumerate([line.strip() for line in sys.stdin]):
         for col in symbol_starts:
             map[(row, col)] = line[col]
 
-def get_numbers_near_coordinate(coords_and_nums, coord):
-    for (x,y), num in coords_and_nums:
-        for 
+# def get_numbers_near_coordinate(coords_and_nums, coord):
+#     for (x,y), num in coords_and_nums:
+#         for
 
+
+def distance(a, b):
+    return max(abs(a[0] - b[0]), abs(a[1] - b[1]))
+
+
+def find_numbers_near(coord, coords_and_nums):
+    x, y = coord
+    numbers_near_symbol = []
+    for (nx, ny), num in coords_and_nums:
+        if min([distance((x, y), (nx, ny + i)) for i in range((len(num)))]) == 1:
+            numbers_near_symbol.append(int(num))
+
+    return numbers_near_symbol
+
+
+p1 = 0
+p2 = 0
 # Loop over all the symbols
-for (x,y), char in [_ for _ in map.items() if not _[1].isdigit()]:
-    # Find all the numbers around the symbol
-    numbers = [num for (x,y), num in [_ for _ in map.items() if _[1].isdigit()] if ]
+symbol_iter = [_ for _ in map.items() if not _[1].isdigit()]
+numbers_iter = [_ for _ in map.items() if _[1].isdigit()]
+
+for (sx, sy), char in symbol_iter:
+    numbers_near_symbol = find_numbers_near((sx, sy), numbers_iter)
+    p1 += sum(numbers_near_symbol)
+
+    if char == "*" and len(numbers_near_symbol) == 2:
+        p2 += math.prod(numbers_near_symbol)
+
+
+print(p1)
+print(p2)
