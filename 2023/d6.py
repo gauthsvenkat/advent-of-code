@@ -1,6 +1,5 @@
-import operator
+import math
 import sys
-from functools import reduce
 
 race_times = [
     int(num) for num in sys.stdin.readline().strip().split(" ") if num.isdigit()
@@ -25,9 +24,7 @@ def find_num_solns(time, distance):
     return e - s + 1
 
 
-p1 = reduce(
-    operator.mul, (find_num_solns(t, d) for t, d in zip(race_times, best_distances))
-)
+p1 = math.prod(find_num_solns(t, d) for t, d in zip(race_times, best_distances))
 
 p2 = find_num_solns(
     int("".join(map(str, race_times))), int("".join(map(str, best_distances)))
