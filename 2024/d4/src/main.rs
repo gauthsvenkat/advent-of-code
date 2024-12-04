@@ -76,28 +76,99 @@ fn diagonal_rl(grid: &Vec<Vec<char>>) -> Vec<String> {
     diagonal_strings
 }
 
-fn p1(input: &str) -> u32 {
-    let reports = parse(input);
-    let diagonal_lr_strings = diagonal_lr(&reports);
+fn top_down(grid: &Vec<Vec<char>>) -> Vec<String> {
+    let grid_length: usize = grid.len();
 
-    let mut sol: u32 = 0;
+    let mut top_down_strings: Vec<String> = Vec::new();
 
-    for line in diagonal_lr_strings.iter() {
-        for s in line.windows(4) {
-            todo!()
+    for c in 0..grid_length {
+        let mut top_down_string: String = String::new();
+        for r in 0..grid_length {
+            top_down_string.push(grid[r][c]);
         }
+        top_down_strings.push(top_down_string);
     }
 
-    for s in diagonal_lr_strings.windows(4) {
-        if s == &"XMAS" || s == "SAMX" {
-            sol += 1;
-        }
-    }
-    0
+    top_down_strings
 }
 
-fn p2(input: &str) -> u32 {
-    todo!()
+fn left_right(grid: &Vec<Vec<char>>) -> Vec<String> {
+    let grid_length: usize = grid.len();
+
+    let mut left_right_strings: Vec<String> = Vec::new();
+
+    for r in 0..grid_length {
+        let mut left_right_string: String = String::new();
+        for c in 0..grid_length {
+            left_right_string.push(grid[r][c]);
+        }
+        left_right_strings.push(left_right_string);
+    }
+
+    left_right_strings
+}
+
+fn count(strings: &Vec<String>) -> usize {
+    let mut count: usize = 0;
+    for string in strings.iter() {
+        count += string.matches("XMAS").count();
+        count += string.matches("SAMX").count();
+    }
+    count
+}
+
+fn p1(input: &str) -> usize {
+    let reports = parse(input);
+
+    let dlr = diagonal_lr(&reports);
+    let drl = diagonal_rl(&reports);
+    let td = top_down(&reports);
+    let lr = left_right(&reports);
+
+    count(&dlr) + count(&drl) + count(&td) + count(&lr)
+}
+
+fn threexthree_window(grid: &Vec<Vec<char>>) -> Vec<String> {
+    let grid_length: usize = grid.len();
+    let mut threexthree_strings: Vec<String> = Vec::new();
+    for r in 0..(grid_length - 2) {
+        for c in 0..(grid_length - 2) {
+            let mut threexthree_string: String = String::new();
+            for i in r..(r + 3) {
+                for j in c..(c + 3) {
+                    threexthree_string.push(grid[i][j]);
+                }
+            }
+            threexthree_strings.push(threexthree_string);
+        }
+    }
+    threexthree_strings
+}
+
+fn count_mas(strings: &Vec<String>) -> usize {
+    let mut count: usize = 0;
+
+    for txt in strings.iter() {
+        let txt_chars: Vec<char> = txt.chars().collect();
+               
+        if ((txt_chars[0] == 'M' && txt_chars[4] == 'A' && txt_chars[8] == 'S')
+            || (txt_chars[0] == 'S' && txt_chars[4] == 'A' && txt_chars[8] == 'M'))
+            && ((txt_chars[2] == 'M' && txt_chars[4] == 'A' && txt_chars[6] == 'S')
+                || (txt_chars[2] == 'S' && txt_chars[4] == 'A' && txt_chars[6] == 'M'))
+        {
+            count += 1;
+        }
+    }
+
+    count
+}
+
+fn p2(input: &str) -> usize {
+    let reports = parse(input);
+
+    let txt = threexthree_window(&reports);
+
+    count_mas(&txt) 
 }
 
 fn main() {
@@ -106,6 +177,6 @@ fn main() {
     let p1_sol = p1(&input);
     println!("{p1_sol}");
 
-    // let p2_sol = p2(&input);
-    // println!("{p2_sol}");
+    let p2_sol = p2(&input);
+    println!("{p2_sol}");
 }
