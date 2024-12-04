@@ -78,8 +78,21 @@ fn diagonal_rl(grid: &Vec<Vec<char>>) -> Vec<String> {
 
 fn p1(input: &str) -> u32 {
     let reports = parse(input);
-    let diagonal_strings = diagonal_rl(&reports);
-    dbg!(diagonal_strings);
+    let diagonal_lr_strings = diagonal_lr(&reports);
+
+    let mut sol: u32 = 0;
+
+    for line in diagonal_lr_strings.iter() {
+        for s in line.windows(4) {
+            todo!()
+        }
+    }
+
+    for s in diagonal_lr_strings.windows(4) {
+        if s == &"XMAS" || s == "SAMX" {
+            sol += 1;
+        }
+    }
     0
 }
 
