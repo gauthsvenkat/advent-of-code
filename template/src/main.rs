@@ -1,10 +1,8 @@
 use std::env;
 use std::fs;
 
-fn get_input() -> String {
-    let args: Vec<String> = env::args().collect();
-    let file_path = &args[1];
-    fs::read_to_string(file_path).unwrap()
+fn readfile(filepath: &str) -> String {
+    fs::read_to_string(filepath).unwrap()
 }
 
 fn parse(input: &str) -> () {
@@ -12,23 +10,28 @@ fn parse(input: &str) -> () {
 }
 
 fn p1(input: &str) -> usize {
-    parsed_input = parse(input);
+    let parsed_input = parse(input);
     // TODO:
     todo!()
 }
 
 fn p2(input: &str) -> usize {
-    parsed_input = parse(input);
+    let parsed_input = parse(input);
     // TODO:
     todo!()
 }
 
 fn main() {
-    let input = get_input();
+    let args: Vec<String> = env::args().collect();
 
-    let p1_sol = p1(&input);
-    println!("{p1_sol}");
+    let part = &args[1];
+    let filepath = &args[2];
 
-    let p2_sol = p2(&input);
-    println!("{p2_sol}");
+    let input = readfile(filepath);
+
+    match part.as_str() {
+        "p1" => println!("{}", p1(&input)),
+        "p2" => println!("{}", p2(&input)),
+        _ => panic!("Invalid part"),
+    };
 }
