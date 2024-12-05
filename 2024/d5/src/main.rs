@@ -53,43 +53,29 @@ fn p1(input: &str) -> i32 {
 fn fix(mut update: Vec<i32>, orderings: &HashMap<i32, Vec<i32>>) -> Vec<i32> {
     let update_len = update.len();
 
-    let mut m: Option<(usize, usize)> = None;
-
-    'outer: for (i, &current_page) in update.iter().enumerate().take(update_len - 1) {
+    for (i, &current_page) in update.iter().enumerate().take(update_len - 1) {
         for (j, &next_page) in update.iter().enumerate().skip(i + 1) {
             if let Some(pages) = orderings.get(&next_page) {
                 if pages.contains(&current_page) {
-                    m = Some((i, j));
-                    break 'outer;
+                    update.swap(i, j);
+                    return fix(update, orderings);
                 }
             }
         }
     }
 
-    match m {
-        Some((i, j)) => {
-            update.swap(i, j);
-            fix(update, orderings)
-        }
-        None => update,
-    }
+    update
 }
 
 fn p2(input: &str) -> i32 {
     let (orderings, updates) = parse(input);
 
-    let incorrect_updates: Vec<Vec<i32>> = updates
+    updates
         .iter()
         .filter(|v| !check(v, &orderings))
-        .cloned()
-        .collect();
-
-    let fixed_updates: Vec<Vec<i32>> = incorrect_updates
-        .iter()
         .map(|v| fix(v.clone(), &orderings))
-        .collect();
-
-    fixed_updates.iter().map(|v| v[v.len() / 2]).sum()
+        .map(|v| v[v.len() / 2])
+        .sum()
 }
 
 fn main() {
