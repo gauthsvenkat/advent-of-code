@@ -13,14 +13,11 @@ fn parse(input: &str) -> (HashMap<i32, Vec<i32>>, Vec<Vec<i32>>) {
     let mut updates: Vec<Vec<i32>> = Vec::new();
 
     for line in input.lines() {
-        if line.contains("|") {
-            let parts: Vec<i32> = line.split("|").map(|x| x.parse().unwrap()).collect();
-            orderings
-                .entry(parts[0])
-                .or_insert(Vec::new())
-                .push(parts[1]);
-        } else if line.contains(",") {
-            let nums: Vec<i32> = line.split(",").map(|x| x.parse().unwrap()).collect();
+        if line.contains('|') {
+            let parts: Vec<i32> = line.split('|').map(|x| x.parse().unwrap()).collect();
+            orderings.entry(parts[0]).or_default().push(parts[1]);
+        } else if line.contains(',') {
+            let nums: Vec<i32> = line.split(',').map(|x| x.parse().unwrap()).collect();
             updates.push(nums);
         }
     }
@@ -71,8 +68,7 @@ fn fix(mut update: Vec<i32>, orderings: &HashMap<i32, Vec<i32>>) -> Vec<i32> {
 
     match m {
         Some((i, j)) => {
-            let v = update.remove(i);
-            update.insert(j, v);
+            update.swap(i, j);
             fix(update, orderings)
         }
         None => update,
@@ -88,14 +84,10 @@ fn p2(input: &str) -> i32 {
         .cloned()
         .collect();
 
-    dbg!("After incorect updates");
-
     let fixed_updates: Vec<Vec<i32>> = incorrect_updates
         .iter()
         .map(|v| fix(v.clone(), &orderings))
         .collect();
-
-    dbg!("After fixed updates");
 
     fixed_updates.iter().map(|v| v[v.len() / 2]).sum()
 }
