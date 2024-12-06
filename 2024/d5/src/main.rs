@@ -2,10 +2,6 @@ use std::collections::HashMap;
 use std::env;
 use std::fs;
 
-fn readfile(filepath: &str) -> String {
-    fs::read_to_string(filepath).unwrap()
-}
-
 fn parse(input: &str) -> (HashMap<i32, Vec<i32>>, Vec<Vec<i32>>) {
     // Key is the page number and the values are the pages that are supposed
     // to be after the key.
@@ -84,7 +80,7 @@ fn main() {
     let part = &args[1];
     let filepath = &args[2];
 
-    let input = readfile(filepath);
+    let input = fs::read_to_string(filepath).unwrap();
 
     match part.as_str() {
         "p1" => println!("{}", p1(&input)),
