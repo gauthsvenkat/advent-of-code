@@ -11,13 +11,11 @@ fn parse(input: &str) -> () {
 
 fn p1(input: &str) -> usize {
     let parsed_input = parse(input);
-    // TODO:
     todo!()
 }
 
 fn p2(input: &str) -> usize {
     let parsed_input = parse(input);
-    // TODO:
     todo!()
 }
 
