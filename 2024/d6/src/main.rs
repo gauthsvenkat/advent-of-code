@@ -66,8 +66,14 @@ fn travel(
     pos: (usize, usize),
     dir: char,
     mut record: HashMap<(usize, usize), HashSet<char>>,
-) -> HashMap<(usize, usize), HashSet<char>> {
+) -> (HashMap<(usize, usize), HashSet<char>>, bool) {
     let (x, y) = pos;
+
+    if let Some(dirs) = record.get(&pos) {
+        if dirs.contains(&dir) {
+            return (record, true);
+        }
+    }
 
     record.entry(pos).or_default().insert(dir);
 
@@ -76,7 +82,7 @@ fn travel(
         || (dir == '^' && x == 0)
         || (dir == '>' && y == grid[x].len() - 1)
     {
-        return record;
+        return (record, false);
     }
 
     let (new_pos, new_dir) = step(grid, pos, dir);
@@ -88,15 +94,39 @@ fn p1(input: &str) -> usize {
     let grid = parse(input);
     let (pos, dir) = get_pos_and_dir(&grid);
 
-    let record = travel(&grid, pos, dir, HashMap::new());
+    let (record, _) = travel(&grid, pos, dir, HashMap::new());
 
     record.len()
 }
 
 fn p2(input: &str) -> usize {
-    let parsed_input = parse(input);
-    // TODO:
-    todo!()
+    let mut grid = parse(input);
+    let (starting_pos, dir) = get_pos_and_dir(&grid);
+
+    let (mut record, _) = travel(&grid, starting_pos, dir, HashMap::new());
+
+    let mut num_loops = 0;
+
+    // Remove start position
+    record.remove(&starting_pos);
+
+    // Insert a # at each visition position
+    // and check if there is a loop
+    for pos in record.keys() {
+        let (x, y) = pos;
+        let cell = grid[*x][*y];
+        grid[*x][*y] = '#';
+        let (_, has_loop) = travel(&grid, starting_pos, dir, HashMap::new());
+
+        if has_loop {
+            println!("Loop at ({}, {})", x, y);
+            num_loops += 1;
+        }
+
+        grid[*x][*y] = cell;
+    }
+
+    num_loops
 }
 
 fn main() {
