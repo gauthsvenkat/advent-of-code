@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs;
 
@@ -65,11 +65,11 @@ fn travel(
     grid: &[Vec<char>],
     pos: (usize, usize),
     dir: char,
-    mut record: HashSet<(usize, usize)>,
-) -> HashSet<(usize, usize)> {
+    mut record: HashMap<(usize, usize), HashSet<char>>,
+) -> HashMap<(usize, usize), HashSet<char>> {
     let (x, y) = pos;
 
-    record.insert(pos);
+    record.entry(pos).or_default().insert(dir);
 
     if (dir == '<' && y == 0)
         || (dir == 'v' && x == grid.len() - 1)
@@ -88,7 +88,7 @@ fn p1(input: &str) -> usize {
     let grid = parse(input);
     let (pos, dir) = get_pos_and_dir(&grid);
 
-    let record = travel(&grid, pos, dir, HashSet::new());
+    let record = travel(&grid, pos, dir, HashMap::new());
 
     record.len()
 }
