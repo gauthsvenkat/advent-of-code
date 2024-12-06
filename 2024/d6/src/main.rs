@@ -33,28 +33,28 @@ fn step(grid: &[Vec<char>], pos: (usize, usize), dir: char) -> ((usize, usize), 
             if grid[x][y - 1] != '#' {
                 ((x, y - 1), dir)
             } else {
-                ((x - 1, y), '^')
+                step(grid, pos, '^')
             }
         }
         'v' => {
             if grid[x + 1][y] != '#' {
                 ((x + 1, y), dir)
             } else {
-                ((x, y - 1), '<')
+                step(grid, pos, '<')
             }
         }
         '^' => {
             if grid[x - 1][y] != '#' {
                 ((x - 1, y), dir)
             } else {
-                ((x, y + 1), '>')
+                step(grid, pos, '>')
             }
         }
         '>' => {
             if grid[x][y + 1] != '#' {
                 ((x, y + 1), dir)
             } else {
-                ((x + 1, y), 'v')
+                step(grid, pos, 'v')
             }
         }
         _ => panic!("Invalid direction"),
