@@ -2,10 +2,6 @@ use regex::Regex;
 use std::env;
 use std::fs;
 
-fn readfile(filepath: &str) -> String {
-    fs::read_to_string(filepath).unwrap()
-}
-
 fn p1(input: &str) -> i32 {
     let mut sol: i32 = 0;
 
@@ -56,7 +52,7 @@ fn main() {
     let part = &args[1];
     let filepath = &args[2];
 
-    let input = readfile(filepath);
+    let input = fs::read_to_string(filepath).unwrap();
 
     match part.as_str() {
         "p1" => println!("{}", p1(&input)),

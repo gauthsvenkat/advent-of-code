@@ -1,10 +1,6 @@
 use std::env;
 use std::fs;
 
-fn readfile(filepath: &str) -> String {
-    fs::read_to_string(filepath).unwrap()
-}
-
 fn parse(input: &str) -> Vec<Vec<i32>> {
     let mut reports: Vec<Vec<i32>> = Vec::new();
 
@@ -89,7 +85,7 @@ fn main() {
     let part = &args[1];
     let filepath = &args[2];
 
-    let input = readfile(filepath);
+    let input = fs::read_to_string(filepath).unwrap();
 
     match part.as_str() {
         "p1" => println!("{}", p1(&input)),
