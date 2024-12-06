@@ -105,28 +105,21 @@ fn p2(input: &str) -> usize {
 
     let (mut record, _) = travel(&grid, starting_pos, dir, HashMap::new());
 
-    let mut num_loops = 0;
-
     // Remove start position
     record.remove(&starting_pos);
 
-    // Insert a # at each visition position
+    // Insert a # at each visited position
     // and check if there is a loop
-    for pos in record.keys() {
-        let (x, y) = pos;
-        let cell = grid[*x][*y];
-        grid[*x][*y] = '#';
-        let (_, has_loop) = travel(&grid, starting_pos, dir, HashMap::new());
-
-        if has_loop {
-            println!("Loop at ({}, {})", x, y);
-            num_loops += 1;
-        }
-
-        grid[*x][*y] = cell;
-    }
-
-    num_loops
+    record
+        .keys()
+        .filter(|&pos| {
+            let (x, y) = pos;
+            grid[*x][*y] = '#';
+            let (_, has_loop) = travel(&grid, starting_pos, dir, HashMap::new());
+            grid[*x][*y] = '.';
+            has_loop
+        })
+        .count()
 }
 
 fn main() {
