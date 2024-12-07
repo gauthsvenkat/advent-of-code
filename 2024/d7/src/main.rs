@@ -34,6 +34,9 @@ fn calibrate(eq: &Vec<u64>, target: u64, allowed_operators: &str, op_acc: Vec<ch
     } else {
         let mut result: u64 = eq[0];
         for i in 0..op_acc.len() {
+            if result > target {
+                return false;
+            }
             match op_acc[i] {
                 '*' => result *= eq[i + 1],
                 '+' => result += eq[i + 1],
