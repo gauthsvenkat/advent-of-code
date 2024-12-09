@@ -71,19 +71,6 @@ fn defragment_files(mut expanded_diskmap: Vec<Option<usize>>) -> Vec<Option<usiz
     let mut right_idx = total_length - 1;
 
     while right_idx > 0 {
-        // println!("\n");
-        // println!("right_idx: {}", right_idx);
-        // expanded_diskmap.iter().for_each(|a| {
-        //     print!(
-        //         "{}",
-        //         match a {
-        //             Some(v) => char::from_digit(*v as u32, 10).unwrap(),
-        //             None => '.',
-        //         }
-        //     );
-        // });
-        // println!("");
-
         // move to start of non empty space from right
         while expanded_diskmap[right_idx].is_none() {
             right_idx -= 1;
@@ -91,8 +78,6 @@ fn defragment_files(mut expanded_diskmap: Vec<Option<usize>>) -> Vec<Option<usiz
 
         let file_id = expanded_diskmap[right_idx].unwrap();
         let mut file_size = 0;
-
-        // println!("right_idx new: {}", right_idx);
 
         while right_idx > file_size
             && match expanded_diskmap[right_idx - file_size] {
@@ -102,8 +87,6 @@ fn defragment_files(mut expanded_diskmap: Vec<Option<usize>>) -> Vec<Option<usiz
         {
             file_size += 1;
         }
-
-        // println!("file_id: {}, file_size: {}", file_id, file_size);
 
         let mut left_idx = 0;
         let mut empty_size = 0;
@@ -130,8 +113,6 @@ fn defragment_files(mut expanded_diskmap: Vec<Option<usize>>) -> Vec<Option<usiz
                 empty_size = 0;
             }
         }
-
-        // println!("empty_size: {}", empty_size);
 
         // If found, move the file to the empty space
         if empty_size >= file_size && left_idx < right_idx {
