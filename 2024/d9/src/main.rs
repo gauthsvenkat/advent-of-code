@@ -31,47 +31,41 @@ fn parse_diskmap(diskmap: &str) -> Vec<Option<usize>> {
     diskmap_vec
 }
 
-fn checksum(expanded_diskmap: &Vec<Option<usize>>) -> usize {
-    let mut sum = 0;
-
-    let mut left_idx = 0;
+fn defragment_blocks(expanded_diskmap: Vec<Option<usize>>) -> Vec<usize> {
     let mut right_idx = expanded_diskmap.len() - 1;
 
-    loop {
-        if left_idx > right_idx {
+    let mut defragmented_diskmap = Vec::new();
+
+    for i in 0..expanded_diskmap.len() {
+        if i > right_idx {
             break;
         }
 
-        match expanded_diskmap[left_idx] {
-            Some(a) => {
-                sum += left_idx * a;
-            }
+        match expanded_diskmap[i] {
+            Some(a) => defragmented_diskmap.push(a),
             None => {
                 while expanded_diskmap[right_idx].is_none() {
                     right_idx -= 1;
                 }
-                sum += left_idx * expanded_diskmap[right_idx].unwrap();
+                defragmented_diskmap.push(expanded_diskmap[right_idx].unwrap());
                 right_idx -= 1;
             }
         }
-        left_idx += 1;
     }
 
-    sum
+    defragmented_diskmap
 }
 
 fn p1(input: &str) -> usize {
     let diskmap = parse(input);
     let expanded_diskmap = parse_diskmap(&diskmap);
+    let defragmented_diskmap = defragment_blocks(expanded_diskmap);
 
-    checksum(&expanded_diskmap)
-
-    // for c in expanded_diskmap {
-    //     match c {
-    //         Some(a) => print!("{a}"),
-    //         None => print!("."),
-    //     }
-    // }
+    defragmented_diskmap
+        .iter()
+        .enumerate()
+        .map(|(i, a)| i * a)
+        .sum()
 }
 
 fn p2(input: &str) -> usize {
