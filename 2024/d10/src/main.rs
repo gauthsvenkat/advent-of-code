@@ -62,10 +62,6 @@ fn hike(
         to_visit_next.push((x, y + 1));
     }
 
-    if to_visit_next.is_empty() {
-        return (unique_summits, unique_paths);
-    }
-
     for &next_position in to_visit_next.iter() {
         (unique_summits, unique_paths) = hike(
             map,
