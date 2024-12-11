@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 use std::env;
 use std::fs;
 
@@ -7,6 +7,12 @@ fn parse(input: &str) -> Vec<usize> {
         .split_whitespace()
         .map(|x| x.parse().unwrap())
         .collect()
+}
+
+#[derive(Copy, Clone)]
+enum Split {
+    One(usize),
+    Two(usize, usize),
 }
 
 fn split_stone_if_even(num: usize) -> Option<(usize, usize)> {
@@ -29,74 +35,59 @@ fn split_stone_if_even(num: usize) -> Option<(usize, usize)> {
     Some((num / divisor, num % divisor))
 }
 
-// fn blink(arrangement: &[usize]) -> Vec<usize> {
-//     let mut new_arrangement: Vec<usize> = Vec::new();
-//
-//     for &stone in arrangement.iter() {
-//         if stone == 0 {
-//             new_arrangement.push(1);
-//         } else if let Some((first, second)) = split_stone_if_even(stone) {
-//             new_arrangement.push(first);
-//             new_arrangement.push(second);
-//         } else {
-//             new_arrangement.push(stone * 2024);
-//         }
-//     }
-//
-//     new_arrangement
-// }
-fn blink(stone: usize, mut record: HashMap<usize, (usize)>) -> HashMap<usize, usize> {
+fn blink_stone(stone: usize, record: &mut HashMap<usize, Split>) -> Split {
     if let Some(&value) = record.get(&stone) {
-        return (value, record);
+        return value;
     }
 
-    if stone == 0 {
-        record.insert(stone, 1);
-        return (1, record);
+    let value = if stone == 0 {
+        Split::One(1)
     } else if let Some((first, second)) = split_stone_if_even(stone) {
-        record.insert(stone, 2);
-        return (2, record);
+        Split::Two(first, second)
     } else {
-        record.insert(stone, 1);
-        return (stone * 2024, record);
+        Split::One(stone * 2024)
+    };
+
+    *record.entry(stone).or_insert(value)
+}
+
+fn blink_stones(stones: Vec<usize>, record: &mut HashMap<usize, Split>) -> Vec<usize> {
+    let mut new_stones = Vec::new();
+
+    for stone in stones {
+        match blink_stone(stone, record) {
+            Split::One(value) => new_stones.push(value),
+            Split::Two(first, second) => {
+                new_stones.push(first);
+                new_stones.push(second);
+            }
+        }
     }
 
+    new_stones
 }
 
 fn p1(input: &str) -> usize {
-    let arrangement = parse(input);
-    let mut total_length = 0;
+    let mut arrangement = parse(input);
+    let mut record = HashMap::new();
 
-    for (i, &stone) in arrangement.iter().enumerate() {
-        println!("Stone {}: {}", i, stone);
-        let mut stones = vec![stone];
-        for j in 0..25 {
-            println!("----Blink {}", j + 1);
-            stones = blink(&stones);
-        }
-
-        total_length += stones.len();
+    for _ in 0..25 {
+        arrangement = blink_stones(arrangement, &mut record);
     }
 
-    total_length
+    arrangement.len()
 }
 
 fn p2(input: &str) -> usize {
-    let arrangement = parse(input);
-    let mut total_length = 0;
+    let mut arrangement = parse(input);
+    let mut record = HashMap::new();
 
-    for (i, &stone) in arrangement.iter().enumerate() {
-        println!("Stone {}: {}", i, stone);
-        let mut stones = vec![stone];
-        for j in 0..75 {
-            println!("----Blink {}", j + 1);
-            stones = blink(&stones);
-        }
-
-        total_length += stones.len();
+    for i in 0..75 {
+        println!("----Blink {}", i + 1);
+        arrangement = blink_stones(arrangement, &mut record);
     }
 
-    total_length
+    arrangement.len()
 }
 
 fn main() {
