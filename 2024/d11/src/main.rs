@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::env;
 use std::fs;
 
@@ -28,42 +29,74 @@ fn split_stone_if_even(num: usize) -> Option<(usize, usize)> {
     Some((num / divisor, num % divisor))
 }
 
-fn blink(arrangement: &[usize]) -> Vec<usize> {
-    let mut new_arrangement: Vec<usize> = Vec::new();
-
-    for &stone in arrangement.iter() {
-        if stone == 0 {
-            new_arrangement.push(1);
-        } else if let Some((first, second)) = split_stone_if_even(stone) {
-            new_arrangement.push(first);
-            new_arrangement.push(second);
-        } else {
-            new_arrangement.push(stone * 2024);
-        }
+// fn blink(arrangement: &[usize]) -> Vec<usize> {
+//     let mut new_arrangement: Vec<usize> = Vec::new();
+//
+//     for &stone in arrangement.iter() {
+//         if stone == 0 {
+//             new_arrangement.push(1);
+//         } else if let Some((first, second)) = split_stone_if_even(stone) {
+//             new_arrangement.push(first);
+//             new_arrangement.push(second);
+//         } else {
+//             new_arrangement.push(stone * 2024);
+//         }
+//     }
+//
+//     new_arrangement
+// }
+fn blink(stone: usize, mut record: HashMap<usize, (usize)>) -> HashMap<usize, usize> {
+    if let Some(&value) = record.get(&stone) {
+        return (value, record);
     }
 
-    new_arrangement
+    if stone == 0 {
+        record.insert(stone, 1);
+        return (1, record);
+    } else if let Some((first, second)) = split_stone_if_even(stone) {
+        record.insert(stone, 2);
+        return (2, record);
+    } else {
+        record.insert(stone, 1);
+        return (stone * 2024, record);
+    }
+
 }
 
 fn p1(input: &str) -> usize {
-    let mut arrangement = parse(input);
+    let arrangement = parse(input);
+    let mut total_length = 0;
 
-    for _ in 0..25 {
-        arrangement = blink(&arrangement);
+    for (i, &stone) in arrangement.iter().enumerate() {
+        println!("Stone {}: {}", i, stone);
+        let mut stones = vec![stone];
+        for j in 0..25 {
+            println!("----Blink {}", j + 1);
+            stones = blink(&stones);
+        }
+
+        total_length += stones.len();
     }
 
-    arrangement.len()
+    total_length
 }
 
 fn p2(input: &str) -> usize {
-    let mut arrangement = parse(input);
+    let arrangement = parse(input);
+    let mut total_length = 0;
 
-    for i in 0..45 {
-        // println!("{}: {}", i, arrangement.len());
-        arrangement = blink(&arrangement);
+    for (i, &stone) in arrangement.iter().enumerate() {
+        println!("Stone {}: {}", i, stone);
+        let mut stones = vec![stone];
+        for j in 0..75 {
+            println!("----Blink {}", j + 1);
+            stones = blink(&stones);
+        }
+
+        total_length += stones.len();
     }
 
-    arrangement.len()
+    total_length
 }
 
 fn main() {
