@@ -62,17 +62,17 @@ fn grow(stone: usize, iteration: usize, record: &mut HashMap<(usize, usize), usi
 }
 
 fn p1(input: &str) -> usize {
-    let arrangement = parse(input);
-    let mut record = HashMap::new();
-
-    arrangement.iter().map(|&s| grow(s, 25, &mut record)).sum()
+    parse(input)
+        .iter()
+        .map(|&s| grow(s, 25, &mut HashMap::new()))
+        .sum()
 }
 
 fn p2(input: &str) -> usize {
-    let arrangement = parse(input);
-    let mut record = HashMap::new();
-
-    arrangement.iter().map(|&s| grow(s, 75, &mut record)).sum()
+    parse(input)
+        .iter()
+        .map(|&s| grow(s, 75, &mut HashMap::new()))
+        .sum()
 }
 
 fn main() {
