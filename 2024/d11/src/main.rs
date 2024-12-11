@@ -33,7 +33,7 @@ fn split_stone_if_even(num: usize) -> Option<(usize, usize)> {
     Some((num / divisor, num % divisor))
 }
 
-fn grow(stone: usize, iteration: usize, record: &mut HashMap<(usize, usize), usize>) -> usize {
+fn length(stone: usize, iteration: usize, record: &mut HashMap<(usize, usize), usize>) -> usize {
     if let Some(&length) = record.get(&(stone, iteration)) {
         return length;
     }
@@ -41,17 +41,17 @@ fn grow(stone: usize, iteration: usize, record: &mut HashMap<(usize, usize), usi
     let length = if stone == 0 {
         match iteration {
             1 => 1,
-            _ => grow(1, iteration - 1, record),
+            _ => length(1, iteration - 1, record),
         }
     } else if let Some((first, second)) = split_stone_if_even(stone) {
         match iteration {
             1 => 2,
-            _ => grow(first, iteration - 1, record) + grow(second, iteration - 1, record),
+            _ => length(first, iteration - 1, record) + length(second, iteration - 1, record),
         }
     } else {
         match iteration {
             1 => 1,
-            _ => grow(stone * 2024, iteration - 1, record),
+            _ => length(stone * 2024, iteration - 1, record),
         }
     };
 
@@ -61,14 +61,14 @@ fn grow(stone: usize, iteration: usize, record: &mut HashMap<(usize, usize), usi
 fn p1(input: &str) -> usize {
     parse(input)
         .iter()
-        .map(|&s| grow(s, 25, &mut HashMap::new()))
+        .map(|&s| length(s, 25, &mut HashMap::new()))
         .sum()
 }
 
 fn p2(input: &str) -> usize {
     parse(input)
         .iter()
-        .map(|&s| grow(s, 75, &mut HashMap::new()))
+        .map(|&s| length(s, 75, &mut HashMap::new()))
         .sum()
 }
 

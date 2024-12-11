@@ -3,4 +3,6 @@ name = "d11"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
+[profile.dev]
+opt-level = 3
+debug = false
