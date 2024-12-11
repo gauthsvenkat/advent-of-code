@@ -43,11 +43,11 @@ fn grow(stone: usize, iteration: usize, record: &mut HashMap<(usize, usize), usi
             1
         };
 
-        return *record.entry((stone, iteration)).or_insert(length);
+        return length;
     }
 
-    if let Some(&value) = record.get(&(stone, iteration)) {
-        return value;
+    if let Some(&length) = record.get(&(stone, iteration)) {
+        return length;
     }
 
     let length = if stone == 0 {
