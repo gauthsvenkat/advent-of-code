@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs;
 
@@ -6,48 +6,18 @@ fn parse(input: &str) -> Vec<Vec<char>> {
     input.lines().map(|l| l.trim().chars().collect()).collect()
 }
 
-fn group_plots(plot: &Vec<Vec<char>>) -> HashMap<(char, usize), Vec<(usize, usize)>> {
-    let num_cells = plot.len() * plot[0].len();
-
-    let mut groups: HashMap<(char, usize), Vec<(usize, usize)>> = HashMap::new();
+fn group_plots(plot: &Vec<Vec<char>>) -> HashMap<char, Vec<(usize, usize)>> {
+    let mut groups: HashMap<char, Vec<(usize, usize)>> = HashMap::new();
 
     for (i, row) in plot.iter().enumerate() {
-        'mid: for (j, &cell) in row.iter().enumerate() {
-            println!("Process {cell} at {i}, {j}");
-            for nc in 0..num_cells {
-                // let mut group = groups.entry((*cell, nc)).or_default();
-                // group.push((i, j));
-                if let Some(group) = groups.get_mut(&(cell, nc)) {
-                    println!("Checking {:?} against {:?}", (i, j), (cell, nc));
-                    //check if current cell is contiguous with any of the cells in the group
-                    if group.iter().any(|(gi, gj)| {
-                        (((*gi as i32) - (i as i32)).abs() + ((*gj as i32) - (j as i32)).abs()) == 1
-                    }) {
-                        println!("Pushing {:?} to {:?}", (i, j), group);
-                        group.push((i, j));
-                        continue 'mid;
-                    }
-                }
-            }
-
-            for nc in 0..num_cells {
-                if !groups.contains_key(&(cell, nc)) {
-                    println!("Pushing {:?} to new group with key {:?}", (i, j), (cell, nc));
-                    groups.insert((cell, nc), vec![(i, j)]);
-                    continue 'mid;
-                }
-            }
-
-            // if let Some(group) = groups.get_mut(cell) {
-            //
-            //     group.iter().filter()
-            //
-            // }
-            // groups.entry(*cell).or_default().push((i, j));
+        for (j, cell) in row.iter().enumerate() {
+            groups.entry(*cell).or_default().push((i, j));
         }
     }
     groups
 }
+
+fn group_contiguous(plot: &Vec<Vec<char>>, sub_plot: &Vec<(usize, usize)>) -> Vec<HashSet<(usize,usize)>>
 
 fn count_perimeter(plot: &Vec<Vec<char>>, sub_plot: &Vec<(usize, usize)>) -> usize {
     let mut perimeter = 0;
@@ -58,19 +28,19 @@ fn count_perimeter(plot: &Vec<Vec<char>>, sub_plot: &Vec<(usize, usize)>) -> usi
     for (i, j) in sub_plot {
         if *j == 0 || plot[*i][j - 1] != plot[*i][*j] {
             perimeter += 1;
-            // println!("left");
+            println!("left");
         }
         if *i == max_i || plot[i + 1][*j] != plot[*i][*j] {
             perimeter += 1;
-            // println!("down");
+            println!("down");
         }
         if *i == 0 || plot[i - 1][*j] != plot[*i][*j] {
             perimeter += 1;
-            // println!("up");
+            println!("up");
         }
         if *j == max_j || plot[*i][j + 1] != plot[*i][*j] {
             perimeter += 1;
-            // println!("right");
+            println!("right");
         }
     }
 
