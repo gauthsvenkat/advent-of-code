@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use cached::proc_macro::cached;
 use std::env;
 use std::fs;
 
@@ -27,43 +27,37 @@ fn split_stone_if_even(num: usize) -> Option<(usize, usize)> {
         return None;
     }
 
-    let half = n_digits / 2;
-    let divisor = 10usize.pow(half);
+    let divisor = 10usize.pow(n_digits / 2);
 
     Some((num / divisor, num % divisor))
 }
 
-fn length(stone: usize, iteration: usize, record: &mut HashMap<(usize, usize), usize>) -> usize {
-    if iteration == 0 {
+#[cached]
+fn count(stone: usize, blink: usize) -> usize {
+    if blink == 0 {
         return 1;
     }
 
-    if let Some(&length) = record.get(&(stone, iteration)) {
-        return length;
-    }
-
-    let length = if stone == 0 {
-        length(1, iteration - 1, record)
+    if stone == 0 {
+        count(1, blink - 1)
     } else if let Some((first, second)) = split_stone_if_even(stone) {
-        length(first, iteration - 1, record) + length(second, iteration - 1, record)
+        count(first, blink - 1) + count(second, blink - 1)
     } else {
-        length(stone * 2024, iteration - 1, record)
-    };
-
-    *record.entry((stone, iteration)).or_insert(length)
+        count(stone * 2024, blink - 1)
+    }
 }
 
 fn p1(input: &str) -> usize {
     parse(input)
         .iter()
-        .map(|&s| length(s, 25, &mut HashMap::new()))
+        .map(|&s| count(s, 25))
         .sum()
 }
 
 fn p2(input: &str) -> usize {
     parse(input)
         .iter()
-        .map(|&s| length(s, 75, &mut HashMap::new()))
+        .map(|&s| count(s, 75))
         .sum()
 }
 
