@@ -34,25 +34,20 @@ fn split_stone_if_even(num: usize) -> Option<(usize, usize)> {
 }
 
 fn length(stone: usize, iteration: usize, record: &mut HashMap<(usize, usize), usize>) -> usize {
+    if iteration == 0 {
+        return 1;
+    }
+
     if let Some(&length) = record.get(&(stone, iteration)) {
         return length;
     }
 
     let length = if stone == 0 {
-        match iteration {
-            1 => 1,
-            _ => length(1, iteration - 1, record),
-        }
+        length(1, iteration - 1, record)
     } else if let Some((first, second)) = split_stone_if_even(stone) {
-        match iteration {
-            1 => 2,
-            _ => length(first, iteration - 1, record) + length(second, iteration - 1, record),
-        }
+        length(first, iteration - 1, record) + length(second, iteration - 1, record)
     } else {
-        match iteration {
-            1 => 1,
-            _ => length(stone * 2024, iteration - 1, record),
-        }
+        length(stone * 2024, iteration - 1, record)
     };
 
     *record.entry((stone, iteration)).or_insert(length)
