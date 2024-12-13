@@ -36,9 +36,7 @@ fn split_stone_if_even(num: usize) -> Option<(usize, usize)> {
 fn count(stone: usize, blink: usize) -> usize {
     if blink == 0 {
         return 1;
-    }
-
-    if stone == 0 {
+    } else if stone == 0 {
         count(1, blink - 1)
     } else if let Some((first, second)) = split_stone_if_even(stone) {
         count(first, blink - 1) + count(second, blink - 1)

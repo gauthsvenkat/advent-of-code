@@ -5,19 +5,20 @@ from functools import cache
 def split_stone_if_even(num: int) -> tuple[int, int] | None:
     """Split a number into two parts if it has an even number of digits."""
     n_digits = len(str(num))
-
     if n_digits % 2 != 0:
         return None
 
-    return int(str(num)[: n_digits // 2]), int(str(num)[n_digits // 2 :])
+    half = n_digits // 2
+    divisor = 10**half
+
+    return num // divisor, num % divisor
 
 
 @cache
 def count(stone: int, blink: int) -> int:
     if blink == 0:
         return 1
-
-    if stone == 0:
+    elif stone == 0:
         return count(1, blink - 1)
     elif (split := split_stone_if_even(stone)) is not None:
         return count(split[0], blink - 1) + count(split[1], blink - 1)
