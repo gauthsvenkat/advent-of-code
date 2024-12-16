@@ -1,4 +1,5 @@
-use std::collections::{HashMap, HashSet};
+use std::cmp::Reverse;
+use std::collections::{BinaryHeap, HashSet};
 use std::env;
 use std::fs;
 
@@ -35,104 +36,50 @@ fn render_maze(maze: &[Vec<char>], visited: &HashSet<(usize, usize)>) {
     println!();
 }
 
-fn solver(
-    maze: &[Vec<char>],
-    posd: ((usize, usize), char),
-    mut visited: HashSet<(usize, usize)>,
-    running_score: usize,
-    maze_best_scores: &mut HashMap<((usize, usize), char), usize>,
-) -> Option<usize> {
-    let (position, direction) = posd;
-    let (i, j) = position;
+fn adder(a: (usize, usize), b: (i8, i8)) -> (usize, usize) {
+    (
+        (a.0 as i32 + b.0 as i32) as usize,
+        (a.1 as i32 + b.1 as i32) as usize,
+    )
+}
 
-    if maze[i][j] == 'E' {
-        println!("Score: {}", running_score);
-        render_maze(maze, &visited);
-        return Some(0);
-    } else if visited.contains(&position) {
-        return None;
-    } else if let Some(best_score) = maze_best_scores.get(&posd) {
-        return Some(*best_score);
-    }
-    // else if let Some(best_score) = maze_best_scores.get(&posd) {
-    //     if running_score >= *best_score {
-    //         return None;
-    //     }
-    // }
+fn solver(maze: &[Vec<char>], start_position: (usize, usize), start_direction: (i8, i8)) -> usize {
+    let mut pq: BinaryHeap<Reverse<(usize, (usize, usize), (i8, i8))>> = BinaryHeap::new();
+    pq.push(Reverse((0, start_position, start_direction)));
 
-    visited.insert(position);
+    let mut visited = HashSet::new();
 
-    let next_directions = match direction {
-        '<' => ['<', 'v', '^'],
-        'v' => ['v', '>', '<'],
-        '^' => ['^', '<', '>'],
-        '>' => ['>', '^', 'v'],
-        _ => panic!("Invalid direction"),
-    };
-    let penalties = [1, 1001, 1001];
+    while let Some(Reverse((score, position, direction))) = pq.pop() {
+        visited.insert((position, direction));
 
-    let mut next_scores: Vec<usize> = Vec::new();
+        let (i, j) = position;
+        let (di, dj) = direction;
 
-    for (dir, penalty) in next_directions.into_iter().zip(penalties) {
-        let dir_vec = match dir {
-            '<' => (0, -1),
-            'v' => (1, 0),
-            '^' => (-1, 0),
-            '>' => (0, 1),
-            _ => panic!("Invalid direction"),
-        };
+        if maze[i][j] == 'E' {
+            return score;
+        }
 
-        let next_pos = (
-            (i as i32 + dir_vec.0) as usize,
-            (j as i32 + dir_vec.1) as usize,
-        );
+        for (c, (n_i, n_j), (n_di, n_dj)) in [
+            (1, adder(position, direction), direction),
+            (1000, position, (-dj, di)),
+            (1000, position, (dj, -di)),
+        ] {
+            if maze[n_i][n_j] == '#' || visited.contains(&((n_i, n_j), (n_di, n_dj))) {
+                continue;
+            }
 
-        if maze[next_pos.0][next_pos.1] == '#' {
-            continue;
-        } else if let Some(next_score) = solver(
-            maze,
-            (next_pos, dir),
-            visited.clone(),
-            running_score + penalty,
-            maze_best_scores,
-        ) {
-            next_scores.push(penalty + next_score);
-        } else {
-            continue;
+            pq.push(Reverse((score + c, (n_i, n_j), (n_di, n_dj))));
         }
     }
 
-    next_scores.into_iter().min().inspect(|&score| {
-        maze_best_scores
-            .entry(posd)
-            .and_modify(|e| {
-                if score > *e {
-                    println!("Updating score from {} to {}", *e, score);
-                    *e = score;
-                }
-            })
-            .or_insert(score);
-    })
+    usize::MAX
 }
 
 fn p1(input: &str) -> usize {
     let maze = parse(input);
-    let start = find_start(&maze);
+    let start_position = find_start(&maze);
 
-    let mut maze_best_scores = HashMap::new();
-
-    let r = solver(
-        &maze,
-        (start, '>'),
-        HashSet::new(),
-        0,
-        &mut maze_best_scores,
-    )
-    .expect("No solution found!");
-
-    // dbg!(&maze_best_scores);
-
-    r
+    solver(&maze, start_position, (0, 1))
 }
 
 fn p2(input: &str) -> usize {
