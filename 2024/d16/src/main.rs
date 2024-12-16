@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs;
 
@@ -23,72 +23,82 @@ fn find_start(maze: &[Vec<char>]) -> (usize, usize) {
 
 fn step(
     maze: &[Vec<char>],
-    posd: ((usize, usize), char),
-    curr_score: usize,
-    mut best_score: usize,
+    position: (usize, usize),
+    direction: char,
     mut visited: HashSet<(usize, usize)>,
-) -> (usize, usize) {
-    let ((i, j), dir) = posd;
-
-    if curr_score >= best_score || visited.contains(&(i, j)) {
-        return (usize::MAX, best_score);
-    }
-
-    visited.insert((i, j));
+    cost_map: &mut HashMap<(usize, usize), usize>,
+) -> Option<usize> {
+    let (i, j) = position;
 
     if maze[i][j] == 'E' {
-        return (
-            curr_score,
-            if curr_score < best_score {
-                curr_score
-            } else {
-                best_score
-            },
-        );
+        return Some(0);
     }
 
-    let possible_dirs = match dir {
+    if let Some(score) = cost_map.get(&position) {
+        return Some(*score);
+    }
+
+    if visited.contains(&position) {
+        return None;
+    }
+
+    visited.insert(position);
+
+    let possible_dirs = match direction {
         '<' => ['<', 'v', '^'],
         'v' => ['v', '>', '<'],
         '^' => ['^', '<', '>'],
         '>' => ['>', '^', 'v'],
         _ => panic!("Invalid direction"),
     };
-    let penalty = [1, 1001, 1001];
 
-    for (&d, p) in possible_dirs.iter().zip(penalty) {
-        let dir_vec = match d {
-            '<' => (0, -1),
-            'v' => (1, 0),
-            '^' => (-1, 0),
-            '>' => (0, 1),
-            _ => panic!("Invalid direction"),
-        };
+    possible_dirs
+        .into_iter()
+        .zip([1, 1001, 1001].iter())
+        .filter_map(|(dir, penalty)| {
+            let dir_vec = match dir {
+                '<' => (0, -1),
+                'v' => (1, 0),
+                '^' => (-1, 0),
+                '>' => (0, 1),
+                _ => panic!("Invalid direction"),
+            };
 
-        let (n_i, n_j) = (
-            (i as i32 + dir_vec.0) as usize,
-            (j as i32 + dir_vec.1) as usize,
-        );
+            let next_pos = (
+                (i as i32 + dir_vec.0) as usize,
+                (j as i32 + dir_vec.1) as usize,
+            );
 
-        if maze[n_i][n_j] == '#' {
-            continue;
-        }
-
-        let (_, n_best_score) = step(maze, ((n_i, n_j), d), curr_score + p, best_score, visited.clone());
-
-        if n_best_score < best_score {
-            best_score = n_best_score;
-        }
-    }
-
-    (curr_score, best_score)
+            if maze[next_pos.0][next_pos.1] == '#' {
+                None
+            } else if let Some(next_score) = cost_map.get(&next_pos) {
+                Some(next_score + penalty)
+            } else {
+                step(maze, next_pos, dir, visited.clone(), cost_map)
+                    .map(|next_score| next_score + penalty)
+            }
+        })
+        .min()
+        .map(|score| {
+            let mut score_copy = score;
+            cost_map.entry(position).and_modify(|e| *e = *e.min(&mut score_copy)).or_insert(score_copy);
+            score
+        })
 }
 
 fn p1(input: &str) -> usize {
     let maze = parse(input);
     let start = find_start(&maze);
 
-    step(&maze, (start, '>'), 0, usize::MAX, HashSet::new()).1
+    let mut cost_map = HashMap::new();
+
+    let r = step(&maze, start, '>', HashSet::new(), &mut cost_map).unwrap_or(usize::MAX);
+
+    dbg!(&cost_map);
+    dbg!(&cost_map.get(&start));
+    dbg!(&cost_map.get(&(1, 12)));
+
+    r
 }
 
 fn p2(input: &str) -> usize {
