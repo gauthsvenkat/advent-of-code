@@ -21,84 +21,66 @@ fn find_start(maze: &[Vec<char>]) -> (usize, usize) {
     panic!("No start found");
 }
 
-fn step(
+fn solver(
     maze: &[Vec<char>],
-    position: (usize, usize),
-    direction: char,
+    posd: ((usize, usize), char),
     mut visited: HashSet<(usize, usize)>,
-    cost_map: &mut HashMap<(usize, usize), usize>,
 ) -> Option<usize> {
+    let (position, direction) = posd;
     let (i, j) = position;
 
     if maze[i][j] == 'E' {
         return Some(0);
-    }
-
-    if let Some(score) = cost_map.get(&position) {
-        return Some(*score);
-    }
-
-    if visited.contains(&position) {
+    } else if visited.contains(&position) {
         return None;
     }
 
     visited.insert(position);
 
-    let possible_dirs = match direction {
+    let next_directions = match direction {
         '<' => ['<', 'v', '^'],
         'v' => ['v', '>', '<'],
         '^' => ['^', '<', '>'],
         '>' => ['>', '^', 'v'],
         _ => panic!("Invalid direction"),
     };
+    // NOTE: Check if it makes sense to turn and move in one step.
+    let penalties = [1, 1001, 1001];
 
-    possible_dirs
-        .into_iter()
-        .zip([1, 1001, 1001].iter())
-        .filter_map(|(dir, penalty)| {
-            let dir_vec = match dir {
-                '<' => (0, -1),
-                'v' => (1, 0),
-                '^' => (-1, 0),
-                '>' => (0, 1),
-                _ => panic!("Invalid direction"),
-            };
+    // TODO: Use these directions by manhatten distance or something
+    let mut next_scores: Vec<usize> = Vec::new();
 
-            let next_pos = (
-                (i as i32 + dir_vec.0) as usize,
-                (j as i32 + dir_vec.1) as usize,
-            );
+    for (dir, penalty) in next_directions.into_iter().zip(penalties) {
+        let dir_vec = match dir {
+            '<' => (0, -1),
+            'v' => (1, 0),
+            '^' => (-1, 0),
+            '>' => (0, 1),
+            _ => panic!("Invalid direction"),
+        };
 
-            if maze[next_pos.0][next_pos.1] == '#' {
-                None
-            } else if let Some(next_score) = cost_map.get(&next_pos) {
-                Some(next_score + penalty)
-            } else {
-                step(maze, next_pos, dir, visited.clone(), cost_map)
-                    .map(|next_score| next_score + penalty)
-            }
-        })
-        .min()
-        .map(|score| {
-            let mut score_copy = score;
-            cost_map.entry(position).and_modify(|e| *e = *e.min(&mut score_copy)).or_insert(score_copy);
-            score
-        })
+        let next_pos = (
+            (i as i32 + dir_vec.0) as usize,
+            (j as i32 + dir_vec.1) as usize,
+        );
+
+        if maze[next_pos.0][next_pos.1] == '#' {
+            continue;
+        } else if let Some(next_score) = solver(maze, (next_pos, dir), visited.clone()) {
+            next_scores.push(penalty + next_score);
+        } else {
+            continue;
+        }
+    }
+
+    next_scores.into_iter().min()
 }
 
 fn p1(input: &str) -> usize {
     let maze = parse(input);
     let start = find_start(&maze);
 
-    let mut cost_map = HashMap::new();
-
-    let r = step(&maze, start, '>', HashSet::new(), &mut cost_map).unwrap_or(usize::MAX);
-
-    dbg!(&cost_map);
-    dbg!(&cost_map.get(&start));
-    dbg!(&cost_map.get(&(1, 12)));
-
-    r
+    solver(&maze, (start, '>'), HashSet::new()).expect("No solution found!")
 }
 
 fn p2(input: &str) -> usize {
