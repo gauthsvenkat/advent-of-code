@@ -10,7 +10,27 @@ fn parse(input: &str) -> Vec<Vec<char>> {
         .collect()
 }
 
-fn find_start(maze: &[Vec<char>]) -> (usize, usize) {
+type Maze = Vec<Vec<char>>;
+type Position = (usize, usize);
+type Direction = (i8, i8);
+type History = Vec<Position>;
+type State = (usize, Position, Direction, History);
+
+fn _render(maze: &Maze, history: &History) {
+    for (i, row) in maze.iter().enumerate() {
+        for (j, cell) in row.iter().enumerate() {
+            if history.contains(&(i, j)) {
+                print!("\x1b[31m{}\x1b[0m", cell);
+            } else {
+                print!("{}", cell);
+            }
+        }
+        println!();
+    }
+    println!();
+}
+
+fn find_start(maze: &Maze) -> Position {
     for (i, row) in maze.iter().enumerate() {
         for (j, cell) in row.iter().enumerate() {
             if *cell == 'S' {
@@ -22,41 +42,42 @@ fn find_start(maze: &[Vec<char>]) -> (usize, usize) {
     panic!("No start found");
 }
 
-fn render_maze(maze: &[Vec<char>], visited: &HashSet<(usize, usize)>) {
-    for (i, row) in maze.iter().enumerate() {
-        for (j, cell) in row.iter().enumerate() {
-            if visited.contains(&(i, j)) {
-                print!("\x1b[31m{}\x1b[0m", cell);
-            } else {
-                print!("{}", cell);
-            }
-        }
-        println!();
-    }
-    println!();
-}
-
-fn adder(a: (usize, usize), b: (i8, i8)) -> (usize, usize) {
+fn adder(position: Position, vector: Direction) -> Position {
     (
-        (a.0 as i32 + b.0 as i32) as usize,
-        (a.1 as i32 + b.1 as i32) as usize,
+        (position.0 as i32 + vector.0 as i32) as usize,
+        (position.1 as i32 + vector.1 as i32) as usize,
     )
 }
 
-fn solver(maze: &[Vec<char>], start_position: (usize, usize), start_direction: (i8, i8)) -> usize {
-    let mut pq: BinaryHeap<Reverse<(usize, (usize, usize), (i8, i8))>> = BinaryHeap::new();
-    pq.push(Reverse((0, start_position, start_direction)));
+fn solver(maze: &Maze, start_position: Position, start_direction: Direction) -> (usize, usize) {
+    let mut pq: BinaryHeap<Reverse<State>> = BinaryHeap::new();
+    pq.push(Reverse((0, start_position, start_direction, Vec::new())));
 
     let mut visited = HashSet::new();
+    let mut best_score: Option<usize> = None;
+    let mut best_seats: HashSet<Position> = HashSet::new();
 
-    while let Some(Reverse((score, position, direction))) = pq.pop() {
+    while let Some(Reverse((score, position, direction, mut history))) = pq.pop() {
         visited.insert((position, direction));
 
         let (i, j) = position;
         let (di, dj) = direction;
 
         if maze[i][j] == 'E' {
-            return score;
+            history.push(position);
+
+            best_score = Some(score);
+            history.iter().for_each(|&pos| {
+                best_seats.insert(pos);
+            });
+        }
+
+        if let Some(bs) = best_score {
+            if score == bs {
+                continue;
+            } else {
+                return (score, best_seats.len());
+            }
         }
 
         for (c, (n_i, n_j), (n_di, n_dj)) in [
@@ -68,23 +89,31 @@ fn solver(maze: &[Vec<char>], start_position: (usize, usize), start_direction: (
                 continue;
             }
 
-            pq.push(Reverse((score + c, (n_i, n_j), (n_di, n_dj))));
+            history.push(position);
+            pq.push(Reverse((
+                score + c,
+                (n_i, n_j),
+                (n_di, n_dj),
+                history.clone(),
+            )));
         }
     }
 
-    usize::MAX
+    (usize::MAX, usize::MIN)
 }
 
 fn p1(input: &str) -> usize {
     let maze = parse(input);
     let start_position = find_start(&maze);
 
-    solver(&maze, start_position, (0, 1))
+    solver(&maze, start_position, (0, 1)).0
 }
 
 fn p2(input: &str) -> usize {
-    let parsed_input = parse(input);
-    todo!()
+    let maze = parse(input);
+    let start_position = find_start(&maze);
+
+    solver(&maze, start_position, (0, 1)).1
 }
 
 fn main() {
