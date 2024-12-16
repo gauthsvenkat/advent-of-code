@@ -21,19 +21,44 @@ fn find_start(maze: &[Vec<char>]) -> (usize, usize) {
     panic!("No start found");
 }
 
+fn render_maze(maze: &[Vec<char>], visited: &HashSet<(usize, usize)>) {
+    for (i, row) in maze.iter().enumerate() {
+        for (j, cell) in row.iter().enumerate() {
+            if visited.contains(&(i, j)) {
+                print!("\x1b[31m{}\x1b[0m", cell);
+            } else {
+                print!("{}", cell);
+            }
+        }
+        println!();
+    }
+    println!();
+}
+
 fn solver(
     maze: &[Vec<char>],
     posd: ((usize, usize), char),
     mut visited: HashSet<(usize, usize)>,
+    running_score: usize,
+    maze_best_scores: &mut HashMap<((usize, usize), char), usize>,
 ) -> Option<usize> {
     let (position, direction) = posd;
     let (i, j) = position;
 
     if maze[i][j] == 'E' {
+        println!("Score: {}", running_score);
+        render_maze(maze, &visited);
         return Some(0);
     } else if visited.contains(&position) {
         return None;
+    } else if let Some(best_score) = maze_best_scores.get(&posd) {
+        return Some(*best_score);
     }
+    // else if let Some(best_score) = maze_best_scores.get(&posd) {
+    //     if running_score >= *best_score {
+    //         return None;
+    //     }
+    // }
 
     visited.insert(position);
 
@@ -44,10 +69,8 @@ fn solver(
         '>' => ['>', '^', 'v'],
         _ => panic!("Invalid direction"),
     };
-    // NOTE: Check if it makes sense to turn and move in one step.
     let penalties = [1, 1001, 1001];
 
-    // TODO: Use these directions by manhatten distance or something
     let mut next_scores: Vec<usize> = Vec::new();
 
     for (dir, penalty) in next_directions.into_iter().zip(penalties) {
@@ -66,21 +89,50 @@ fn solver(
 
         if maze[next_pos.0][next_pos.1] == '#' {
             continue;
-        } else if let Some(next_score) = solver(maze, (next_pos, dir), visited.clone()) {
+        } else if let Some(next_score) = solver(
+            maze,
+            (next_pos, dir),
+            visited.clone(),
+            running_score + penalty,
+            maze_best_scores,
+        ) {
             next_scores.push(penalty + next_score);
         } else {
             continue;
         }
     }
 
-    next_scores.into_iter().min()
+    next_scores.into_iter().min().inspect(|&score| {
+        maze_best_scores
+            .entry(posd)
+            .and_modify(|e| {
+                if score > *e {
+                    println!("Updating score from {} to {}", *e, score);
+                    *e = score;
+                }
+            })
+            .or_insert(score);
+    })
 }
 
 fn p1(input: &str) -> usize {
     let maze = parse(input);
     let start = find_start(&maze);
 
-    solver(&maze, (start, '>'), HashSet::new()).expect("No solution found!")
+    let mut maze_best_scores = HashMap::new();
+
+    let r = solver(
+        &maze,
+        (start, '>'),
+        HashSet::new(),
+        0,
+        &mut maze_best_scores,
+    )
+    .expect("No solution found!");
+
+    // dbg!(&maze_best_scores);
+
+    r
 }
 
 fn p2(input: &str) -> usize {
