@@ -40,21 +40,7 @@ fn adder(position: Position, vector: Direction) -> (i32, i32) {
     )
 }
 
-fn _render(grid: &Grid, position: Position) {
-    for (y, row) in grid.iter().enumerate() {
-        for (x, cell) in row.iter().enumerate() {
-            if (x, y) == position {
-                print!("\x1b[31m{}\x1b[0m", cell);
-            } else {
-                print!("{}", cell);
-            }
-        }
-        println!();
-    }
-    println!();
-}
-
-fn solver(grid: &Grid) -> usize {
+fn solver(grid: &Grid) -> Option<usize> {
     let mut pq: BinaryHeap<Reverse<(usize, Position)>> = BinaryHeap::new();
     pq.push(Reverse((0, (0, 0))));
 
@@ -66,7 +52,7 @@ fn solver(grid: &Grid) -> usize {
         let (x, y) = position;
 
         if x == x_max && y == y_max {
-            return score;
+            return Some(score);
         }
 
         for (nx, ny) in [
@@ -90,19 +76,36 @@ fn solver(grid: &Grid) -> usize {
         }
     }
 
-    usize::MAX
+    None
 }
 
 fn p1(input: &str) -> usize {
     let coords = parse(input);
     let grid = create_grid(&coords[..1024]);
 
-    solver(&grid)
+    solver(&grid).expect("No solution found")
 }
 
-fn p2(input: &str) -> usize {
-    let parsed_input = parse(input);
-    todo!()
+fn binary_search(low: usize, high: usize, coords: &[Position]) -> usize {
+    let mid = (low + high) / 2;
+
+    let grid = create_grid(&coords[..mid]);
+
+    if low == mid {
+        mid
+    } else if solver(&grid).is_some() {
+        binary_search(mid, high, coords)
+    } else {
+        binary_search(low, mid, coords)
+    }
+}
+
+fn p2(input: &str) -> String {
+    let coords = parse(input);
+    let first_unsolvable = binary_search(0, coords.len(), &coords);
+    let coord = coords.get(first_unsolvable).unwrap();
+
+    format!("{},{}", coord.0, coord.1)
 }
 
 fn main() {
