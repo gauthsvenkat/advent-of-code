@@ -2,7 +2,6 @@ use regex::Regex;
 use std::env;
 use std::fs;
 
-#[derive(Debug)]
 struct Machine {
     a: usize,
     b: usize,
@@ -11,7 +10,6 @@ struct Machine {
     ip: usize,
 }
 
-#[derive(Debug)]
 enum Operand {
     Literal(u8),
     Combo(u8),
@@ -34,7 +32,6 @@ impl Operand {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Debug)]
 enum Opcode {
     adv,
     bxl,
@@ -46,7 +43,6 @@ enum Opcode {
     cdv,
 }
 
-#[derive(Debug)]
 struct Instruction {
     opcode: Opcode,
     operand: Operand,
@@ -185,86 +181,34 @@ fn p1(input: &str) -> String {
         .join(",")
 }
 
-fn is_quine(mut machine: Machine, program: &Program) -> bool {
-    let mut i = 0;
-
-    while let Some(n) = run_once(&mut machine, program) {
-        if i >= program.length * 2 || n != program.raw[i] {
-            return false;
-        }
-
-        i += 1;
-    }
-
-    if i != program.length * 2 {
-        return false;
-    }
-
-    true
-}
-
-fn binary_search(low: usize, high: usize, program: &Program, lb: bool) -> usize {
-    let mid = (low + high) / 2;
-
-    let output = run(
-        &mut Machine {
-            a: mid,
-            b: 0,
-            c: 0,
-            ip: 0,
-        },
-        program,
-    );
-
-    match lb {
-        true => {
-            if low == mid {
-                mid + 1
-            } else if output.len() < program.length * 2 {
-                binary_search(mid, high, program, lb)
-            } else {
-                binary_search(low, mid, program, lb)
-            }
-        }
-        false => {
-            if low == mid {
-                mid
-            } else if output.len() <= program.length * 2 {
-                binary_search(mid, high, program, lb)
-            } else {
-                binary_search(low, mid, program, lb)
+fn reverse(program: &Program, iteration: usize, a: usize) -> Option<usize> {
+    if iteration < program.length * 2 {
+        if let Some(n) = run_once(
+            &mut Machine {
+                a,
+                b: 0,
+                c: 0,
+                ip: 0,
+            },
+            program,
+        ) {
+            if n != program.raw[iteration] {
+                return None;
             }
         }
     }
+
+    if iteration == 0 {
+        return Some(a);
+    }
+
+    ((a << 3)..((a + 1) << 3)).find_map(|possible_a| reverse(program, iteration - 1, possible_a))
 }
 
 fn p2(input: &str) -> usize {
-    let (machine, program) = parse(input);
+    let (_, program) = parse(input);
 
-    // for a in 0..=usize::MAX {
-    //     let mut machine = Machine { a, ..machine };
-    //
-    //     print!("a = {}: ", a);
-    //     let output = run(&mut machine, &program);
-    //     println!("{:?}", output);
-    // }
-    println!("program length = {}", program.length * 2);
-
-    let a_lb = binary_search(usize::MIN, usize::MAX, &program, true);
-    let a_ub = binary_search(usize::MIN, usize::MAX, &program, false);
-
-    println!("lower bound = {}", a_lb);
-    let output = run(&mut Machine { a:a_lb, ..machine }, &program);
-    println!("output = {:?}", output);
-    println!("output length {}", output.len());
-
-    println!("upper bound = {}", a_ub);
-    let output = run(&mut Machine { a:a_ub, ..machine }, &program);
-    println!("output = {:?}", output);
-    println!("output length {}", output.len());
-
-    println!("Difference = {}", a_ub - a_lb);
-    todo!()
+    reverse(&program, program.length * 2, 0).unwrap()
 }
 
 fn main() {
