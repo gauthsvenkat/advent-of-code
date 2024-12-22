@@ -167,15 +167,18 @@ fn run_once(machine: &mut Machine, program: &Program) -> Option<u8> {
     }
 }
 
-fn p1(input: &str) -> String {
-    let (mut machine, program) = parse(input);
+fn run(machine: &mut Machine, program: &Program) -> Vec<u8> {
     let mut output = Vec::new();
-
-    while let Some(n) = run_once(&mut machine, &program) {
+    while let Some(n) = run_once(machine, program) {
         output.push(n);
     }
-
     output
+}
+
+fn p1(input: &str) -> String {
+    let (mut machine, program) = parse(input);
+
+    run(&mut machine, &program)
         .iter()
         .map(|n| n.to_string())
         .collect::<Vec<String>>()
@@ -200,16 +203,68 @@ fn is_quine(mut machine: Machine, program: &Program) -> bool {
     true
 }
 
+fn binary_search(low: usize, high: usize, program: &Program, lb: bool) -> usize {
+    let mid = (low + high) / 2;
+
+    let output = run(
+        &mut Machine {
+            a: mid,
+            b: 0,
+            c: 0,
+            ip: 0,
+        },
+        program,
+    );
+
+    match lb {
+        true => {
+            if low == mid {
+                mid + 1
+            } else if output.len() < program.length * 2 {
+                binary_search(mid, high, program, lb)
+            } else {
+                binary_search(low, mid, program, lb)
+            }
+        }
+        false => {
+            if low == mid {
+                mid
+            } else if output.len() <= program.length * 2 {
+                binary_search(mid, high, program, lb)
+            } else {
+                binary_search(low, mid, program, lb)
+            }
+        }
+    }
+}
+
 fn p2(input: &str) -> usize {
     let (machine, program) = parse(input);
 
-    let mut a = 0;
+    // for a in 0..=usize::MAX {
+    //     let mut machine = Machine { a, ..machine };
+    //
+    //     print!("a = {}: ", a);
+    //     let output = run(&mut machine, &program);
+    //     println!("{:?}", output);
+    // }
+    println!("program length = {}", program.length * 2);
 
-    while !is_quine(Machine { a, ..machine }, &program) {
-        a += 1;
-    }
+    let a_lb = binary_search(usize::MIN, usize::MAX, &program, true);
+    let a_ub = binary_search(usize::MIN, usize::MAX, &program, false);
 
-    a
+    println!("lower bound = {}", a_lb);
+    let output = run(&mut Machine { a:a_lb, ..machine }, &program);
+    println!("output = {:?}", output);
+    println!("output length {}", output.len());
+
+    println!("upper bound = {}", a_ub);
+    let output = run(&mut Machine { a:a_ub, ..machine }, &program);
+    println!("output = {:?}", output);
+    println!("output length {}", output.len());
+
+    println!("Difference = {}", a_ub - a_lb);
+    todo!()
 }
 
 fn main() {
