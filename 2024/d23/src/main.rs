@@ -44,7 +44,17 @@ fn get_triples(network: &HashMap<String, HashSet<String>>) -> HashSet<BTreeSet<S
     triples
 }
 
-fn get_largest_set(network: &HashMap<String, HashSet<String>>) -> Vec<String> {
+fn p1(input: &str) -> usize {
+    let network = parse(input);
+    let triples = get_triples(&network);
+
+    triples
+        .iter()
+        .filter(|triple| triple.iter().any(|computer| computer.starts_with('t')))
+        .count()
+}
+
+fn get_largest_set(network: &HashMap<String, HashSet<String>>) -> HashSet<String> {
     let mut largest_set = HashSet::new();
 
     for (computer, connections) in network.iter() {
@@ -67,26 +77,19 @@ fn get_largest_set(network: &HashMap<String, HashSet<String>>) -> Vec<String> {
         }
     }
 
-    let mut largest_set: Vec<String> = largest_set.into_iter().collect();
-    largest_set.sort();
     largest_set
-}
-
-fn p1(input: &str) -> usize {
-    let network = parse(input);
-    let triples = get_triples(&network);
-
-    triples
-        .iter()
-        .filter(|triple| triple.iter().any(|computer| computer.starts_with('t')))
-        .count()
 }
 
 fn p2(input: &str) -> String {
     let network = parse(input);
     let largest_set = get_largest_set(&network);
 
-    largest_set.join(",")
+    {
+        let mut largest_set = largest_set.into_iter().collect::<Vec<String>>();
+        largest_set.sort_unstable();
+        largest_set
+    }
+    .join(",")
 }
 
 fn main() {
