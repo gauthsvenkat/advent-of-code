@@ -21,14 +21,12 @@ fn get_triples(network: &HashMap<String, HashSet<String>>) -> HashSet<BTreeSet<S
     let mut triples = HashSet::new();
 
     for (computer, connections) in network.iter() {
-        let connections = connections.iter().collect::<Vec<&String>>();
-
         for (i, connection) in connections.iter().enumerate() {
             for another_connection in connections.iter().skip(i) {
                 if network
-                    .get(*connection)
+                    .get(connection)
                     .unwrap()
-                    .contains(*another_connection)
+                    .contains(another_connection)
                 {
                     let mut triple = BTreeSet::new();
                     triple.insert(computer.clone());
