@@ -36,7 +36,6 @@ impl Keypad {
                 ('1', (2, 0)),
                 ('2', (2, 1)),
                 ('3', (2, 2)),
-                // (' ', (3, 0)),
                 ('0', (3, 1)),
                 ('A', (3, 2)),
             ]),
@@ -53,7 +52,6 @@ impl Keypad {
         */
         Keypad {
             keys: HashMap::from([
-                // (' ', (0, 0)),
                 ('^', (0, 1)),
                 ('A', (0, 2)),
                 ('<', (1, 0)),
@@ -135,8 +133,8 @@ fn button_sequence(
         .chain(code.chars())
         .collect::<Vec<char>>()
         .windows(2)
-        .map(|window| {
-            let (current_char, next_char) = (window[0], window[1]);
+        .map(|w| {
+            let (current_char, next_char) = (w[0], w[1]);
 
             if let Some(&len) = cache.get(&(current_char, next_char, depth)) {
                 len
