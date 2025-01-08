@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::collections::{BTreeMap, VecDeque};
+use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::env;
 use std::fs;
 
@@ -86,7 +86,65 @@ fn p1(input: &str) -> usize {
     to_dec(&realized_bits)
 }
 
+#[derive(Debug)]
+enum BitType {
+    InputXor(u8),
+    CarryXor(u8),
+    InputAnd(u8),
+    CarryAnd(u8),
+    CarryOr(u8),
+}
+
+fn assert(connections: &Connections, conn: &str, bit_type: &BitType) -> bool {
+    // dbg!(conn, bit_type);
+
+    let result = if let Some((a, op, b)) = connections.get(conn) {
+        match bit_type {
+            BitType::InputXor(i) => {
+                ((a == &format!("x{:02}", i) && b == &format!("y{:02}", i))
+                    || (a == &format!("y{:02}", i) && b == &format!("x{:02}", i)))
+                    && op == "XOR"
+            }
+            BitType::CarryXor(i) | BitType::CarryAnd(i) => {
+                (assert(connections, a, &BitType::CarryOr(*i))
+                    && assert(connections, b, &BitType::InputXor(*i)))
+                    || (assert(connections, b, &BitType::CarryOr(*i))
+                        && assert(connections, a, &BitType::InputXor(*i)))
+            }
+            BitType::InputAnd(i) => {
+                ((a == &format!("x{:02}", i) && b == &format!("y{:02}", i))
+                    || (a == &format!("y{:02}", i) && b == &format!("x{:02}", i)))
+                    && op == "AND"
+            }
+            BitType::CarryOr(i) => {
+                if *i == 1 {
+                    return (a == "x00" && b == "y00") || (a == "y00" && b == "x00");
+                }
+
+                (assert(connections, a, &BitType::InputAnd(*i - 1))
+                    && assert(connections, b, &BitType::CarryAnd(*i - 1)))
+                    || (assert(connections, b, &BitType::InputAnd(*i - 1))
+                        && assert(connections, a, &BitType::CarryAnd(*i - 1)))
+            }
+        }
+    } else {
+        false
+    };
+
+    // if !result {
+    //     println!("Failed at {}", conn);
+    // }
+
+    result
+}
+
 fn p2(input: &str) -> usize {
+    let (_, connections) = parse(input);
+
+    let r = assert(&connections, "z12", &BitType::CarryXor(12));
+    dbg!(r);
+    // let r = assert(&connections, "z01", &BitType::CarryXor(1));
+    // dbg!(r);
     todo!()
 }
 
