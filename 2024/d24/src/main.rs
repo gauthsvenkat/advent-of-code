@@ -1,11 +1,12 @@
 use regex::Regex;
-use std::collections::{BTreeMap, BTreeSet, VecDeque};
+use std::collections::{BTreeMap, VecDeque};
 use std::env;
 use std::fs;
 
 type Bits = BTreeMap<String, bool>;
 type Gate = (String, String, String);
 type Connections = BTreeMap<String, Gate>;
+type InvertedConnections = BTreeMap<Gate, String>;
 
 fn parse(input: &str) -> (Bits, Connections) {
     let groups: Vec<&str> = input.split("\n\n").collect();
@@ -86,65 +87,71 @@ fn p1(input: &str) -> usize {
     to_dec(&realized_bits)
 }
 
-#[derive(Debug)]
-enum BitType {
-    InputXor(u8),
-    CarryXor(u8),
-    InputAnd(u8),
-    CarryAnd(u8),
-    CarryOr(u8),
+fn get_bit(ic: &InvertedConnections, a: &str, b: &str, op: &str) -> String {
+    if let Some(bit) = ic.get(&(a.to_string(), op.to_string(), b.to_string())) {
+        bit.to_string()
+    } else if let Some(bit) = ic.get(&(b.to_string(), op.to_string(), a.to_string())) {
+        bit.to_string()
+    } else {
+        panic!("No {} gate found for {} and {}", op, a, b);
+    }
 }
 
-fn assert(connections: &Connections, conn: &str, bit_type: &BitType) -> bool {
-    // dbg!(conn, bit_type);
+fn analyze(ic: &InvertedConnections) {
+    let mut carry = get_bit(ic, "x00", "y00", "AND");
 
-    let result = if let Some((a, op, b)) = connections.get(conn) {
-        match bit_type {
-            BitType::InputXor(i) => {
-                ((a == &format!("x{:02}", i) && b == &format!("y{:02}", i))
-                    || (a == &format!("y{:02}", i) && b == &format!("x{:02}", i)))
-                    && op == "XOR"
-            }
-            BitType::CarryXor(i) | BitType::CarryAnd(i) => {
-                (assert(connections, a, &BitType::CarryOr(*i))
-                    && assert(connections, b, &BitType::InputXor(*i)))
-                    || (assert(connections, b, &BitType::CarryOr(*i))
-                        && assert(connections, a, &BitType::InputXor(*i)))
-            }
-            BitType::InputAnd(i) => {
-                ((a == &format!("x{:02}", i) && b == &format!("y{:02}", i))
-                    || (a == &format!("y{:02}", i) && b == &format!("x{:02}", i)))
-                    && op == "AND"
-            }
-            BitType::CarryOr(i) => {
-                if *i == 1 {
-                    return (a == "x00" && b == "y00") || (a == "y00" && b == "x00");
-                }
+    for i in 1..=44 {
+        let x_gate = format!("x{:02}", i);
+        let y_gate = format!("y{:02}", i);
 
-                (assert(connections, a, &BitType::InputAnd(*i - 1))
-                    && assert(connections, b, &BitType::CarryAnd(*i - 1)))
-                    || (assert(connections, b, &BitType::InputAnd(*i - 1))
-                        && assert(connections, a, &BitType::CarryAnd(*i - 1)))
-            }
+        let s = get_bit(ic, &x_gate, &y_gate, "XOR");
+        if s.starts_with('z') {
+            println!("{} xor {} -> {}", x_gate, y_gate, s);
         }
-    } else {
-        false
-    };
 
-    // if !result {
-    //     println!("Failed at {}", conn);
-    // }
+        let z = get_bit(ic, &carry, &s, "XOR");
+        if *z != format!("z{:02}", i) {
+            println!("Expected z{:02}, got {}", i, z);
+        }
 
-    result
+        let p = get_bit(ic, &x_gate, &y_gate, "AND");
+        if p.starts_with('z') {
+            println!("{} and {} -> {}", x_gate, y_gate, p);
+        }
+
+        let q = get_bit(ic, &carry, &s, "AND");
+        if q.starts_with('z') {
+            println!("{} and {} -> {}", carry, s, q);
+        }
+
+        carry = get_bit(ic, &p, &q, "OR");
+    }
 }
 
 fn p2(input: &str) -> usize {
     let (_, connections) = parse(input);
 
-    let r = assert(&connections, "z12", &BitType::CarryXor(12));
-    dbg!(r);
-    // let r = assert(&connections, "z01", &BitType::CarryXor(1));
-    // dbg!(r);
+    let inverted_connections: InvertedConnections = connections
+        .into_iter()
+        .map(|(k, (a, op, b))| ((a, op, b), k))
+        .collect();
+
+    analyze(&inverted_connections);
+
+    // Good luck writing code for this one
+    // There wires are flipped
+    // x12 AND y12 -> z12
+    // pps XOR wdg -> vdc
+    //
+    // cdc OR stq -> z21
+    // rsc XOR bbn -> nhn
+    //
+    // x25 XOR y25 -> khg
+    // y25 AND x25 -> tvb
+    //
+    // jbr AND wcs -> z33
+    // wcs XOR jbr -> gst
+
     todo!()
 }
 
