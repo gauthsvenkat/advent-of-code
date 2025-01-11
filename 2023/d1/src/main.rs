@@ -1,26 +1,46 @@
 use std::env;
 use std::fs;
 
-fn parse(input: &str) -> Vec<Vec<char>> {
+fn parse(input: &str) -> Vec<String> {
     input.lines().map(|l| l.chars().collect()).collect()
 }
 
-fn get_number(line: &Vec<char>) -> usize {
-    let first_digit = line.iter().find(|c| c.is_numeric()).unwrap();
-    let last_digit = line.iter().rev().find(|c| c.is_numeric()).unwrap();
+fn get_number(line: &str) -> usize {
+    let first_digit = line.chars().find(|c| c.is_numeric()).unwrap();
+    let last_digit = line.chars().rev().find(|c| c.is_numeric()).unwrap();
 
     format!("{}{}", first_digit, last_digit).parse().unwrap()
 }
 
 fn p1(input: &str) -> usize {
-    let lines = parse(input);
-
-    lines.iter().map(get_number).sum()
+    parse(input).into_iter().map(|line| get_number(&line)).sum()
 }
 
 fn p2(input: &str) -> usize {
-    let parsed_input = parse(input);
-    todo!()
+    let lines = parse(input);
+
+    lines
+        .into_iter()
+        .map(|mut line| {
+            let replacements = vec![
+                ("one", "o1e"),
+                ("two", "t2o"),
+                ("three", "t3e"),
+                ("four", "4"),
+                ("five", "5e"),
+                ("six", "6"),
+                ("seven", "7n"),
+                ("eight", "e8t"),
+                ("nine", "n9e"),
+            ];
+
+            for (old, new) in replacements {
+                line = line.replace(old, new);
+            }
+
+            get_number(&line)
+        })
+        .sum()
 }
 
 fn main() {
