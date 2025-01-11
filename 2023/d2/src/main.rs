@@ -56,8 +56,28 @@ fn p1(input: &str) -> usize {
 }
 
 fn p2(input: &str) -> usize {
-    let parsed_input = parse(input);
-    todo!()
+    let games = parse(input);
+
+    games
+        .values()
+        .map(|record| {
+            let mut max_draw = (0, 0, 0);
+
+            for draw in record {
+                if draw.0 > max_draw.0 {
+                    max_draw.0 = draw.0;
+                }
+                if draw.1 > max_draw.1 {
+                    max_draw.1 = draw.1;
+                }
+                if draw.2 > max_draw.2 {
+                    max_draw.2 = draw.2;
+                }
+            }
+
+            max_draw.0 * max_draw.1 * max_draw.2
+        })
+        .sum()
 }
 
 fn main() {
