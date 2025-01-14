@@ -46,37 +46,44 @@ fn parse(input: &str) -> (Vec<usize>, Maps) {
     (seeds, maps)
 }
 
-fn get(maps: &Maps, map_type: &str, n: usize) -> usize {
-    for (d, s, l) in maps.get(map_type).unwrap() {
-        if n >= *s && n < s + l {
-            return n - s + d;
+fn map_range(map: &Map, (input_start, input_range): Range) -> Ranges {
+    let input_end = input_start + input_range;
+
+    for (destination_start, source_start, range) in map {
+        let source_end = source_start + range;
+
+        // Cases to handle
+        // 1) Input range entire outside ALL source ranges.
+        // 2) Input range entirely inside some source range.
+        // 3) Input range partially inside some source range.
+        //      3.1) Input starts inside some source range, ends outside some source range.
+        //      3.2) Input starts outside some source range, ends inside some source range.
+        //      3.3) Input starts outside some source range, ends outside some source range.
+
+        if input_end <= *source_start || input_start >= source_end {
+            continue;
+        } else if input_start >= *source_start && input_end <= source_end {
+            return vec![(destination_start + input_start - source_start, input_range)];
+        } else if input_start >= *source_start && input_end > source_end {
+            return map_range(map, (input_start, source_end - input_start))
+                .into_iter()
+                .chain(map_range(map, (source_end, input_end - source_end)))
+                .collect();
+        } else if input_start < *source_start && input_end <= source_end {
+            return map_range(map, (input_start, source_start - input_start))
+                .into_iter()
+                .chain(map_range(map, (*source_start, input_end - source_start)))
+                .collect();
+        } else if input_start < *source_start && input_end > source_end {
+            return map_range(map, (input_start, source_start - input_start))
+                .into_iter()
+                .chain(map_range(map, (*source_start, *range)))
+                .chain(map_range(map, (source_end, input_end - source_end)))
+                .collect();
         }
     }
 
-    n
-}
-
-fn mapper(maps: &Maps, map_type: &str, mut inputs: Ranges, mut outputs: Ranges) -> Ranges {
-    while let Some((is, ir)) = inputs.pop() {
-        let ie = is + (ir - 1);
-
-        for (od, os, or) in maps.get(map_type).unwrap() {
-            let oe = os + (or - 1);
-            // If the input range is contained
-            // in the output range
-            if is >= *os && ie < oe {
-                outputs.push((is - os + od, *or))
-            } else if is < *os && ie < oe {
-                todo!()
-            } else if is >= *os && ie >= oe {
-                todo!()
-            } else {
-                todo!()
-            }
-        }
-    }
-
-    outputs
+    vec![(input_start, input_range)]
 }
 
 fn p1(input: &str) -> usize {
@@ -84,13 +91,13 @@ fn p1(input: &str) -> usize {
 
     seeds
         .iter()
-        .map(|&n| get(&maps, "seed-to-soil", n))
-        .map(|n| get(&maps, "soil-to-fertilizer", n))
-        .map(|n| get(&maps, "fertilizer-to-water", n))
-        .map(|n| get(&maps, "water-to-light", n))
-        .map(|n| get(&maps, "light-to-temperature", n))
-        .map(|n| get(&maps, "temperature-to-humidity", n))
-        .map(|n| get(&maps, "humidity-to-location", n))
+        .map(|&n| map_range(&maps["seed-to-soil"], (n, 1))[0].0)
+        .map(|n| map_range(&maps["soil-to-fertilizer"], (n, 1))[0].0)
+        .map(|n| map_range(&maps["fertilizer-to-water"], (n, 1))[0].0)
+        .map(|n| map_range(&maps["water-to-light"], (n, 1))[0].0)
+        .map(|n| map_range(&maps["light-to-temperature"], (n, 1))[0].0)
+        .map(|n| map_range(&maps["temperature-to-humidity"], (n, 1))[0].0)
+        .map(|n| map_range(&maps["humidity-to-location"], (n, 1))[0].0)
         .min()
         .unwrap()
 }
@@ -100,14 +107,14 @@ fn p2(input: &str) -> usize {
 
     seeds
         .chunks(2)
-        .flat_map(|s| s[0]..s[0] + s[1])
-        .map(|n| get(&maps, "seed-to-soil", n))
-        .map(|n| get(&maps, "soil-to-fertilizer", n))
-        .map(|n| get(&maps, "fertilizer-to-water", n))
-        .map(|n| get(&maps, "water-to-light", n))
-        .map(|n| get(&maps, "light-to-temperature", n))
-        .map(|n| get(&maps, "temperature-to-humidity", n))
-        .map(|n| get(&maps, "humidity-to-location", n))
+        .flat_map(|w| map_range(&maps["seed-to-soil"], (w[0], w[1])))
+        .flat_map(|(n, r)| map_range(&maps["soil-to-fertilizer"], (n, r)))
+        .flat_map(|(n, r)| map_range(&maps["fertilizer-to-water"], (n, r)))
+        .flat_map(|(n, r)| map_range(&maps["water-to-light"], (n, r)))
+        .flat_map(|(n, r)| map_range(&maps["light-to-temperature"], (n, r)))
+        .flat_map(|(n, r)| map_range(&maps["temperature-to-humidity"], (n, r)))
+        .flat_map(|(n, r)| map_range(&maps["humidity-to-location"], (n, r)))
+        .map(|(n, _)| n)
         .min()
         .unwrap()
 }
