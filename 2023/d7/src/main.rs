@@ -3,104 +3,94 @@ use std::collections::HashMap;
 use std::env;
 use std::fs;
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-enum Card {
-    Two,
-    Three,
-    Four,
-    Five,
-    Six,
-    Seven,
-    Eight,
-    Nine,
-    Ten,
-    Jack,
-    Queen,
-    King,
-    Ace,
-}
-
-#[derive(PartialEq, Eq, PartialOrd, Ord)]
-enum Hand {
-    HighCard,
-    OnePair,
-    TwoPair,
-    ThreeOfAKind,
-    FullHouse,
-    FourOfAKind,
-    FiveOfAKind,
-}
-
-use Card::*;
-use Hand::*;
-
-#[derive(Debug)]
 struct CamelCard {
-    hand: Vec<Card>,
+    hand: String,
     bid: usize,
 }
 
+fn card_to_score(c: &char, demote: bool) -> u8 {
+    match c {
+        '2'..='9' => c.to_digit(10).unwrap() as u8,
+        'T' => 10,
+        'J' => {
+            if demote {
+                1
+            } else {
+                11
+            }
+        }
+        'Q' => 12,
+        'K' => 13,
+        'A' => 14,
+        _ => panic!("Unknown card"),
+    }
+}
+
 impl CamelCard {
-    fn hand_type(&self) -> Hand {
+    fn hand_score(&self, promote: bool) -> usize {
         let mut counter = HashMap::new();
 
-        for c in self.hand.iter() {
-            counter.entry(c).and_modify(|e| *e += 1).or_insert(1);
+        self.hand
+            .chars()
+            .for_each(|c| *counter.entry(c).or_default() += 1);
+
+        if promote {
+            if let Some(j_count) = counter.remove(&'J') {
+                if counter.is_empty() {
+                    counter.insert('A', j_count);
+                } else {
+                    let max_count: &usize = counter.values().max().unwrap();
+                    let promotion_candidates: Vec<&char> = counter
+                        .iter()
+                        .filter_map(|(k, &v)| if v == *max_count { Some(k) } else { None })
+                        .collect();
+
+                    let final_candidate: &char = match promotion_candidates.len() {
+                        1 => promotion_candidates[0],
+                        _ => promotion_candidates
+                            .iter()
+                            .max_by_key(|&&c| card_to_score(c, false))
+                            .unwrap(),
+                    };
+
+                    counter
+                        .entry(*final_candidate)
+                        .and_modify(|v| *v += j_count);
+                }
+            }
         }
 
-        let mut counts: Vec<usize> = counter.values().cloned().collect();
-        counts.sort_unstable();
+        let counts: Vec<usize> = {
+            let mut counts: Vec<usize> = counter.values().cloned().collect();
+            counts.sort_unstable();
+            counts
+        };
 
         match counter.len() {
-            1 => FiveOfAKind,
+            1 => 6,
             2 => match counts.as_slice() {
-                [1, 4] => FourOfAKind,
-                [2, 3] => FullHouse,
+                [1, 4] => 5,
+                [2, 3] => 4,
                 _ => unreachable!(),
             },
             3 => match counts.as_slice() {
-                [1, 1, 3] => ThreeOfAKind,
-                [1, 2, 2] => TwoPair,
+                [1, 1, 3] => 3,
+                [1, 2, 2] => 2,
                 _ => unreachable!(),
             },
-            4 => OnePair,
-            5 => HighCard,
+            4 => 1,
+            5 => 0,
             _ => unreachable!(),
         }
     }
-}
 
-impl Ord for CamelCard {
-    fn cmp(&self, other_card: &Self) -> Ordering {
-        match self.hand_type().cmp(&other_card.hand_type()) {
-            Ordering::Equal => {
-                for (a, b) in self.hand.iter().zip(other_card.hand.iter()) {
-                    match a.cmp(b) {
-                        Ordering::Equal => continue,
-                        other => return other,
-                    }
-                }
-
-                Ordering::Equal
-            }
-            other => other,
-        }
+    fn card_scores(&self, demote: bool) -> Vec<u8> {
+        self.hand
+            .chars()
+            .map(|c| card_to_score(&c, demote))
+            .collect()
     }
 }
-
-impl PartialOrd for CamelCard {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl PartialEq for CamelCard {
-    fn eq(&self, other: &Self) -> bool {
-        self.cmp(other) == Ordering::Equal
-    }
-}
-
-impl Eq for CamelCard {}
 
 fn parse(input: &str) -> Vec<CamelCard> {
     input
@@ -109,34 +99,36 @@ fn parse(input: &str) -> Vec<CamelCard> {
             let l: Vec<&str> = l.split_whitespace().collect();
 
             CamelCard {
-                hand: l[0]
-                    .chars()
-                    .map(|c| match c {
-                        '2' => Two,
-                        '3' => Three,
-                        '4' => Four,
-                        '5' => Five,
-                        '6' => Six,
-                        '7' => Seven,
-                        '8' => Eight,
-                        '9' => Nine,
-                        'T' => Ten,
-                        'J' => Jack,
-                        'Q' => Queen,
-                        'K' => King,
-                        'A' => Ace,
-                        _ => unreachable!(),
-                    })
-                    .collect(),
+                hand: l[0].to_string(),
                 bid: l[1].parse().unwrap(),
             }
         })
         .collect()
 }
 
+fn sorter(a: &CamelCard, b: &CamelCard, promote: bool) -> Ordering {
+    match a.hand_score(promote).cmp(&b.hand_score(promote)) {
+        Ordering::Equal => {
+            for (s1, s2) in a
+                .card_scores(promote)
+                .iter()
+                .zip(b.card_scores(promote).iter())
+            {
+                match s1.cmp(s2) {
+                    Ordering::Equal => continue,
+                    other => return other,
+                }
+            }
+            Ordering::Equal
+        }
+        other => other,
+    }
+}
+
 fn p1(input: &str) -> usize {
     let mut camel_cards = parse(input);
-    camel_cards.sort_unstable();
+
+    camel_cards.sort_by(|a, b| sorter(a, b, false));
 
     camel_cards
         .iter()
@@ -146,8 +138,15 @@ fn p1(input: &str) -> usize {
 }
 
 fn p2(input: &str) -> usize {
-    let parsed_input = parse(input);
-    todo!()
+    let mut camel_cards = parse(input);
+
+    camel_cards.sort_by(|a, b| sorter(a, b, true));
+
+    camel_cards
+        .iter()
+        .enumerate()
+        .map(|(i, card)| card.bid * (i + 1))
+        .sum()
 }
 
 fn main() {
