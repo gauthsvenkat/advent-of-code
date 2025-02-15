@@ -35,7 +35,7 @@ fn split_stone_if_even(num: usize) -> Option<(usize, usize)> {
 #[cached]
 fn count(stone: usize, blink: usize) -> usize {
     if blink == 0 {
-        return 1;
+        1
     } else if stone == 0 {
         count(1, blink - 1)
     } else if let Some((first, second)) = split_stone_if_even(stone) {
@@ -46,17 +46,11 @@ fn count(stone: usize, blink: usize) -> usize {
 }
 
 fn p1(input: &str) -> usize {
-    parse(input)
-        .iter()
-        .map(|&s| count(s, 25))
-        .sum()
+    parse(input).iter().map(|&s| count(s, 25)).sum()
 }
 
 fn p2(input: &str) -> usize {
-    parse(input)
-        .iter()
-        .map(|&s| count(s, 75))
-        .sum()
+    parse(input).iter().map(|&s| count(s, 75)).sum()
 }
 
 fn main() {
