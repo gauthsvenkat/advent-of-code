@@ -174,8 +174,8 @@ fn main() {
     let input = fs::read_to_string(filepath).unwrap();
 
     match part.as_str() {
-        "p1" => println!("{}",p1(&input)),
-        "p2" => println!("{}",p2(&input)),
+        "p1" => println!("{}", p1(&input)),
+        "p2" => println!("{}", p2(&input)),
         _ => panic!("Invalid part"),
     };
 }

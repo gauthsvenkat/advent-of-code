@@ -92,7 +92,8 @@ fn process(grid: &[Vec<char>]) -> (usize, usize) {
     let gear_ratio = gear_map
         .into_iter()
         .filter(|(_, nums)| nums.len() == 2)
-        .map(|(_, nums)| nums.iter().product::<usize>()).sum();
+        .map(|(_, nums)| nums.iter().product::<usize>())
+        .sum();
 
     (total, gear_ratio)
 }
