@@ -6,6 +6,7 @@ current_year := `date +%Y`
 current_day := `date +%d`
 
 create day=("d"+current_day) year=current_year:
+	mkdir -p {{year}}
 	cargo generate template --name {{day}} --destination {{year}}
 
 edit input="eg" day=("d"+current_day) year=current_year:
