@@ -1,6 +1,6 @@
 [package]
-name = "d3"
-version = "0.1.0"
-edition = "2021"
+name = "y2023-d03"
+version.workspace = true
+edition.workspace = true
 
 [dependencies]

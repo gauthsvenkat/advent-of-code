@@ -1,6 +1,6 @@
 [package]
-name = "d12"
-version = "0.1.0"
-edition = "2021"
+name = "y2024-d12"
+version.workspace = true
+edition.workspace = true
 
 [dependencies]
