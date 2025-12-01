@@ -51,7 +51,7 @@ fn p1(input: &str) -> usize {
 }
 
 fn p2(input: &str) -> usize {
-    let parsed_input = parse(input);
+    let _parsed_input = parse(input);
     todo!()
 }
 

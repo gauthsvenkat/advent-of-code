@@ -35,16 +35,6 @@ fn parse(input: &str) -> Map {
     }
 }
 
-fn pprint(map: &Map) {
-    for i in 0..map.n_rows {
-        for j in 0..map.n_cols {
-            print!("{}", map.get(i, j).unwrap());
-        }
-        println!();
-    }
-    println!();
-}
-
 // (0, -1) => Direction::Left,
 // (1, 0) => Direction::Down,
 // (-1, 0) => Direction::Up,
