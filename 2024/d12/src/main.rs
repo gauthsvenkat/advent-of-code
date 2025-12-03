@@ -40,7 +40,7 @@ fn get_contiguous(
     contiguous_plot
 }
 
-fn count_perimeter(plot: &Vec<Vec<char>>, contiguous_plot: &HashSet<(usize, usize)>) -> usize {
+fn count_perimeter(plot: &[Vec<char>], contiguous_plot: &HashSet<(usize, usize)>) -> usize {
     let mut perimeter = 0;
 
     let max_i = plot.len() - 1;
@@ -194,7 +194,7 @@ fn traverse_straight(
     seen
 }
 
-fn count_sides(plot: &Vec<Vec<char>>, contiguous_plot: &HashSet<(usize, usize)>) -> usize {
+fn count_sides(plot: &[Vec<char>], contiguous_plot: &HashSet<(usize, usize)>) -> usize {
     let max_i = plot.len();
     let max_j = plot[0].len();
 

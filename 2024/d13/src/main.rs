@@ -2,7 +2,11 @@ use regex::Regex;
 use std::env;
 use std::fs;
 
-fn parse(input: &str) -> Vec<((i64, i64), (i64, i64), (i64, i64))> {
+type Button = (i64, i64);
+type Prize = (i64, i64);
+type Machine = (Button, Button, Prize);
+
+fn parse(input: &str) -> Vec<Machine> {
     let re = Regex::new(r"X[+=](\d+), Y[+=](\d+)").unwrap();
 
     input

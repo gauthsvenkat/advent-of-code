@@ -21,7 +21,7 @@ fn _split_str_in(s: &str, size: usize) -> Option<Vec<&str>> {
         return None;
     }
 
-    if (l % size) != 0 {
+    if !l.is_multiple_of(size) {
         return None;
     }
 
@@ -39,7 +39,7 @@ fn _is_num_digits_even(num_str: &str) -> bool {
 
 fn _is_invalid_v1(num: &usize) -> bool {
     let num_str = num.to_string();
-    let mid = (num_str.len() + 1) / 2;
+    let mid = num_str.len().div_ceil(2);
 
     if let Some(splitted) = _split_str_in(&num_str, mid) {
         splitted[0] == splitted[1]
@@ -53,13 +53,13 @@ fn p1(input: &str) -> usize {
 
     parsed_input
         .iter()
-        .map(|(lb, ub)| (*lb..=*ub).filter(|num| _is_invalid_v1(num)).sum::<usize>())
+        .map(|(lb, ub)| (*lb..=*ub).filter(_is_invalid_v1).sum::<usize>())
         .sum()
 }
 
 fn _is_invalid_v2(num: &usize) -> bool {
     let num_str = num.to_string();
-    let mid = (num_str.len() + 1) / 2;
+    let mid = num_str.len().div_ceil(2);
 
     for size in 1..(mid + 1) {
         if let Some(splitted) = _split_str_in(&num_str, size) {
@@ -77,7 +77,7 @@ fn p2(input: &str) -> usize {
 
     parsed_input
         .iter()
-        .map(|(lb, ub)| (*lb..=*ub).filter(|num| _is_invalid_v2(num)).sum::<usize>())
+        .map(|(lb, ub)| (*lb..=*ub).filter(_is_invalid_v2).sum::<usize>())
         .sum()
 }
 

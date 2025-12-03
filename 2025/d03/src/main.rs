@@ -27,11 +27,8 @@ fn get_joltage(bank: &[usize], num_batteries: usize) -> Option<usize> {
         .max_by(|(i, &a), (j, &b)| a.cmp(&b).then(j.cmp(i)))
         .unwrap();
 
-    if let Some(joltage) = get_joltage(&bank[idx + 1..], num_batteries - 1) {
-        Some(max * 10_usize.pow(num_batteries as u32 - 1) + joltage)
-    } else {
-        None
-    }
+    get_joltage(&bank[idx + 1..], num_batteries - 1)
+        .map(|joltage| max * 10_usize.pow(num_batteries as u32 - 1) + joltage)
 }
 
 fn p1(input: &str) -> usize {

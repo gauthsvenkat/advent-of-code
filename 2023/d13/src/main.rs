@@ -13,9 +13,9 @@ fn parse(input: &str) -> Vec<Pattern> {
 fn transpose(pattern: &Pattern) -> Pattern {
     let mut transposed = vec![vec![' '; pattern.len()]; pattern[0].len()];
 
-    for i in 0..pattern.len() {
-        for j in 0..pattern[0].len() {
-            transposed[j][i] = pattern[i][j];
+    for (i, row) in pattern.iter().enumerate() {
+        for (j, &ch) in row.iter().enumerate() {
+            transposed[j][i] = ch;
         }
     }
 

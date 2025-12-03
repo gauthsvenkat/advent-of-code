@@ -2,6 +2,11 @@ use std::collections::HashSet;
 use std::env;
 use std::fs;
 
+type Position = (usize, usize);
+type Path = Vec<Position>;
+type Summits = HashSet<Position>;
+type Paths = HashSet<Path>;
+
 fn parse(input: &str) -> Vec<Vec<u32>> {
     input
         .lines()
@@ -9,7 +14,7 @@ fn parse(input: &str) -> Vec<Vec<u32>> {
         .collect()
 }
 
-fn get_trailheads(map: &[Vec<u32>]) -> Vec<(usize, usize)> {
+fn get_trailheads(map: &[Vec<u32>]) -> Vec<Position> {
     let mut trailheads = Vec::new();
 
     for (i, row) in map.iter().enumerate() {
@@ -25,12 +30,12 @@ fn get_trailheads(map: &[Vec<u32>]) -> Vec<(usize, usize)> {
 
 fn hike(
     map: &Vec<Vec<u32>>,
-    map_dims: (usize, usize),
-    position: (usize, usize),
-    mut unique_summits: HashSet<(usize, usize)>,
-    mut path: Vec<(usize, usize)>,
-    mut unique_paths: HashSet<Vec<(usize, usize)>>,
-) -> (HashSet<(usize, usize)>, HashSet<Vec<(usize, usize)>>) {
+    map_dims: Position,
+    position: Position,
+    mut unique_summits: Summits,
+    mut path: Path,
+    mut unique_paths: Paths,
+) -> (Summits, Paths) {
     let (x, y) = position;
     let height = map[x][y];
 

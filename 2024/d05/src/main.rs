@@ -21,7 +21,7 @@ fn parse(input: &str) -> (HashMap<i32, Vec<i32>>, Vec<Vec<i32>>) {
     (orderings, updates)
 }
 
-fn check(update: &Vec<i32>, orderings: &HashMap<i32, Vec<i32>>) -> bool {
+fn check(update: &[i32], orderings: &HashMap<i32, Vec<i32>>) -> bool {
     let update_len = update.len();
 
     for (i, &current_page) in update.iter().enumerate().take(update_len - 1) {

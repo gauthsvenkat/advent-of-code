@@ -8,7 +8,7 @@ fn parse(input: &str) -> Vec<Vec<char>> {
         .collect()
 }
 
-fn diagonal_lr(grid: &Vec<Vec<char>>) -> Vec<String> {
+fn diagonal_lr(grid: &[Vec<char>]) -> Vec<String> {
     let grid_length: usize = grid.len();
 
     let mut diagonal_strings: Vec<String> = Vec::new();
@@ -40,7 +40,7 @@ fn diagonal_lr(grid: &Vec<Vec<char>>) -> Vec<String> {
     diagonal_strings
 }
 
-fn diagonal_rl(grid: &Vec<Vec<char>>) -> Vec<String> {
+fn diagonal_rl(grid: &[Vec<char>]) -> Vec<String> {
     let grid_length: usize = grid.len();
 
     let mut diagonal_strings: Vec<String> = Vec::new();
@@ -70,15 +70,15 @@ fn diagonal_rl(grid: &Vec<Vec<char>>) -> Vec<String> {
     diagonal_strings
 }
 
-fn top_down(grid: &Vec<Vec<char>>) -> Vec<String> {
+fn top_down(grid: &[Vec<char>]) -> Vec<String> {
     let grid_length: usize = grid.len();
 
     let mut top_down_strings: Vec<String> = Vec::new();
 
     for c in 0..grid_length {
         let mut top_down_string: String = String::new();
-        for r in 0..grid_length {
-            top_down_string.push(grid[r][c]);
+        for row in grid.iter() {
+            top_down_string.push(row[c]);
         }
         top_down_strings.push(top_down_string);
     }
@@ -86,23 +86,18 @@ fn top_down(grid: &Vec<Vec<char>>) -> Vec<String> {
     top_down_strings
 }
 
-fn left_right(grid: &Vec<Vec<char>>) -> Vec<String> {
-    let grid_length: usize = grid.len();
-
+fn left_right(grid: &[Vec<char>]) -> Vec<String> {
     let mut left_right_strings: Vec<String> = Vec::new();
 
-    for r in 0..grid_length {
-        let mut left_right_string: String = String::new();
-        for c in 0..grid_length {
-            left_right_string.push(grid[r][c]);
-        }
+    for row in grid.iter() {
+        let left_right_string: String = row.iter().collect();
         left_right_strings.push(left_right_string);
     }
 
     left_right_strings
 }
 
-fn count(strings: &Vec<String>) -> usize {
+fn count(strings: &[String]) -> usize {
     let mut count: usize = 0;
     for string in strings.iter() {
         count += string.matches("XMAS").count();
@@ -122,15 +117,15 @@ fn p1(input: &str) -> usize {
     count(&dlr) + count(&drl) + count(&td) + count(&lr)
 }
 
-fn threexthree_window(grid: &Vec<Vec<char>>) -> Vec<String> {
+fn threexthree_window(grid: &[Vec<char>]) -> Vec<String> {
     let grid_length: usize = grid.len();
     let mut threexthree_strings: Vec<String> = Vec::new();
     for r in 0..(grid_length - 2) {
         for c in 0..(grid_length - 2) {
             let mut threexthree_string: String = String::new();
-            for i in r..(r + 3) {
-                for j in c..(c + 3) {
-                    threexthree_string.push(grid[i][j]);
+            for row in grid.iter().skip(r).take(3) {
+                for &ch in row.iter().skip(c).take(3) {
+                    threexthree_string.push(ch);
                 }
             }
             threexthree_strings.push(threexthree_string);
@@ -139,7 +134,7 @@ fn threexthree_window(grid: &Vec<Vec<char>>) -> Vec<String> {
     threexthree_strings
 }
 
-fn count_mas(strings: &Vec<String>) -> usize {
+fn count_mas(strings: &[String]) -> usize {
     let mut count: usize = 0;
 
     for txt in strings.iter() {

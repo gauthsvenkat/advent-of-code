@@ -3,7 +3,10 @@ use std::collections::HashMap;
 use std::env;
 use std::fs;
 
-fn parse(input: &str) -> (Vec<(u32, u32)>, Vec<(i32, i32)>) {
+type Position = (u32, u32);
+type Velocity = (i32, i32);
+
+fn parse(input: &str) -> (Vec<Position>, Vec<Velocity>) {
     let re = Regex::new(r"p=(\d+),(\d+) v=(-?\d+),(-?\d+)").unwrap();
     let mut positions = Vec::new();
     let mut velocities = Vec::new();
@@ -24,7 +27,7 @@ fn parse(input: &str) -> (Vec<(u32, u32)>, Vec<(i32, i32)>) {
     (positions, velocities)
 }
 
-fn find_grid_size(positions: &Vec<(u32, u32)>) -> (u32, u32) {
+fn find_grid_size(positions: &[Position]) -> (u32, u32) {
     (
         positions.iter().map(|(x, _)| *x).max().unwrap() + 1,
         positions.iter().map(|(_, y)| *y).max().unwrap() + 1,
@@ -47,7 +50,7 @@ fn find_position(
     )
 }
 
-fn safety_factor(grid_dims: (u32, u32), positions: &Vec<(u32, u32)>) -> u32 {
+fn safety_factor(grid_dims: (u32, u32), positions: &[Position]) -> u32 {
     let (w, h) = grid_dims;
     let mut quads = [0; 4];
 
@@ -79,7 +82,7 @@ fn p1(input: &str) -> u32 {
     safety_factor(grid_dims, &latest_positions)
 }
 
-fn render_positions(grid_dims: (u32, u32), positions: &Vec<(u32, u32)>) -> String {
+fn render_positions(grid_dims: (u32, u32), positions: &[Position]) -> String {
     let (w, h) = grid_dims;
 
     let mut position_counts: HashMap<(u32, u32), usize> = HashMap::new();
@@ -120,7 +123,7 @@ fn has_full_3x3_block(rendered: &str) -> bool {
     false
 }
 
-fn is_3x3_block_occupied(grid: &Vec<Vec<char>>, x: usize, y: usize) -> bool {
+fn is_3x3_block_occupied(grid: &[Vec<char>], x: usize, y: usize) -> bool {
     for dy in 0..3 {
         for dx in 0..3 {
             if grid[y + dy][x + dx] == '.' {
@@ -142,7 +145,7 @@ fn p2(input: &str) -> usize {
                 .iter()
                 .zip(&velocities)
                 .map(|(pos, vel)| find_position(second + 1, &grid_dims, pos, vel))
-                .collect(),
+                .collect::<Vec<_>>(),
         );
 
         if has_full_3x3_block(&render) {

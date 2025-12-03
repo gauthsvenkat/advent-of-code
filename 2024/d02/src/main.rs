@@ -15,14 +15,14 @@ fn parse(input: &str) -> Vec<Vec<i32>> {
     reports
 }
 
-fn is_safe(report: &Vec<i32>) -> bool {
+fn is_safe(report: &[i32]) -> bool {
     let mut p_delta: i32 = 0;
 
     for w in report.windows(2) {
         let c_delta: i32 = w[0] - w[1];
         let c_delta_abs = c_delta.abs();
 
-        if (c_delta_abs < 1) || (c_delta_abs > 3) || ((c_delta * p_delta) < 0) {
+        if !(1..=3).contains(&c_delta_abs) || ((c_delta * p_delta) < 0) {
             return false;
         }
 
@@ -38,7 +38,7 @@ fn p1(input: &str) -> u32 {
     let mut num_safe: u32 = 0;
 
     for report in &reports {
-        if is_safe(&report) {
+        if is_safe(report) {
             num_safe += 1;
         }
     }
@@ -46,11 +46,11 @@ fn p1(input: &str) -> u32 {
     num_safe
 }
 
-fn combinations_excluding_one(input: &Vec<i32>) -> Vec<Vec<i32>> {
+fn combinations_excluding_one(input: &[i32]) -> Vec<Vec<i32>> {
     let mut combinations = Vec::new();
 
     for i in 0..input.len() {
-        let mut copy = input.clone();
+        let mut copy = input.to_owned();
         copy.remove(i);
         combinations.push(copy);
     }
@@ -64,10 +64,10 @@ fn p2(input: &str) -> u32 {
     let mut num_safe: u32 = 0;
 
     for report in &reports {
-        if is_safe(&report) {
+        if is_safe(report) {
             num_safe += 1;
         } else {
-            for combi in combinations_excluding_one(&report) {
+            for combi in combinations_excluding_one(report) {
                 if is_safe(&combi) {
                     num_safe += 1;
                     break;

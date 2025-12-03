@@ -6,7 +6,7 @@ fn p1(input: &str) -> i32 {
     let mut sol: i32 = 0;
 
     let re = Regex::new(r"mul\((-?\d+),(-?\d+)\)").unwrap();
-    for (_, [a, b]) in re.captures_iter(&input).map(|c| c.extract()) {
+    for (_, [a, b]) in re.captures_iter(input).map(|c| c.extract()) {
         let a: i32 = a.parse().unwrap();
         let b: i32 = b.parse().unwrap();
 
@@ -24,7 +24,7 @@ fn p2(input: &str) -> i32 {
 
     let mut skip: bool = false;
 
-    for m in re.find_iter(&input).map(|c| c.as_str()) {
+    for m in re.find_iter(input).map(|c| c.as_str()) {
         match m {
             "do()" => {
                 skip = false;

@@ -23,7 +23,7 @@ fn num_digits(mut num: usize) -> u32 {
 fn split_stone_if_even(num: usize) -> Option<(usize, usize)> {
     let n_digits = num_digits(num);
 
-    if n_digits % 2 != 0 {
+    if !n_digits.is_multiple_of(2) {
         return None;
     }
 
