@@ -8,8 +8,20 @@ repos:
       - id: mixed-line-ending
   - repo: local
     hooks:
-      - id: rustfmt
-        name: rustfmt
-        entry: rustfmt
+      - id: cargo-fmt
+        name: cargo fmt
+        entry: cargo fmt --
         language: system
         types: [rust]
+      - id: cargo-check
+        name: cargo check
+        entry: cargo check
+        language: system
+        types: [rust]
+        pass_filenames: false
+      - id: cargo-clippy
+        name: cargo clippy
+        entry: cargo clippy -- -D warnings
+        language: system
+        types: [rust]
+        pass_filenames: false
