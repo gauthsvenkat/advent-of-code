@@ -172,3 +172,45 @@ fn main() {
         _ => panic!("Invalid part"),
     };
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE1: &str = include_str!("../eg1.txt");
+    const EXAMPLE2: &str = include_str!("../eg2.txt");
+    const EXAMPLE3: &str = include_str!("../eg3.txt");
+    const EXAMPLE4: &str = include_str!("../eg4.txt");
+    const EXAMPLE5: &str = include_str!("../eg5.txt");
+    const EXAMPLE6: &str = include_str!("../eg6.txt");
+
+    #[test]
+    fn test_p1_example1() {
+        assert_eq!(p1(EXAMPLE1), 4);
+    }
+
+    #[test]
+    fn test_p1_example2() {
+        assert_eq!(p1(EXAMPLE2), 8);
+    }
+
+    #[test]
+    fn test_p2_example3() {
+        assert_eq!(p2(EXAMPLE3), 4);
+    }
+
+    #[test]
+    fn test_p2_example4() {
+        assert_eq!(p2(EXAMPLE4), 4);
+    }
+
+    #[test]
+    fn test_p2_example5() {
+        assert_eq!(p2(EXAMPLE5), 8);
+    }
+
+    #[test]
+    fn test_p2_example6() {
+        assert_eq!(p2(EXAMPLE6), 10);
+    }
+}

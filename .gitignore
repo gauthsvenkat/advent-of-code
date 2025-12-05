@@ -1,5 +1,5 @@
 debug/
 target/
-*.txt
+in*.txt
 .DS_Store
 __pycache__/

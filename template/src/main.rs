@@ -29,3 +29,22 @@ fn main() {
         _ => panic!("Invalid part"),
     };
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../eg.txt");
+
+    #[test]
+    fn test_p1_example() {
+        // TODO:
+        assert_eq!(p1(EXAMPLE), 0);
+    }
+
+    #[test]
+    fn test_p2_example() {
+        // TODO:
+        assert_eq!(p2(EXAMPLE), 0);
+    }
+}

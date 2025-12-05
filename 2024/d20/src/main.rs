@@ -106,7 +106,7 @@ fn cheats(solution: &Path, lasting: usize) -> HashMap<(Position, Position), usiz
     cheat_savings
 }
 
-fn p1(input: &str) -> usize {
+fn p1_with_threshold(input: &str, threshold: usize) -> usize {
     let maze = parse(input);
     let start = find_start(&maze);
 
@@ -122,11 +122,15 @@ fn p1(input: &str) -> usize {
 
     cheat_savings
         .iter()
-        .filter(|(_, &saved)| saved >= 100)
+        .filter(|(_, &saved)| saved >= threshold)
         .count()
 }
 
-fn p2(input: &str) -> usize {
+fn p1(input: &str) -> usize {
+    p1_with_threshold(input, 100)
+}
+
+fn p2_with_threshold(input: &str, threshold: usize) -> usize {
     let maze = parse(input);
     let start = find_start(&maze);
 
@@ -142,8 +146,12 @@ fn p2(input: &str) -> usize {
 
     cheat_savings
         .iter()
-        .filter(|(_, &saved)| saved >= 100)
+        .filter(|(_, &saved)| saved >= threshold)
         .count()
+}
+
+fn p2(input: &str) -> usize {
+    p2_with_threshold(input, 100)
 }
 
 fn main() {
@@ -159,4 +167,21 @@ fn main() {
         "p2" => println!("{}", p2(&input)),
         _ => panic!("Invalid part"),
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../eg1.txt");
+
+    #[test]
+    fn test_p1_example() {
+        assert_eq!(p1_with_threshold(EXAMPLE, 1), 44);
+    }
+
+    #[test]
+    fn test_p2_example() {
+        assert_eq!(p2_with_threshold(EXAMPLE, 50), 285);
+    }
 }

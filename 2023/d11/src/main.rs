@@ -128,3 +128,19 @@ fn main() {
         _ => panic!("Invalid part"),
     };
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../eg1.txt");
+
+    #[test]
+    fn test_p1_example() {
+        assert_eq!(p1(EXAMPLE), 374);
+    }
+
+    // Note: p2 uses expansion factor of 1000000 for the actual puzzle,
+    // but the example would need factor 100 to get answer 8410.
+    // Since p2 hardcodes the factor, we can't directly test it with the example.
+}

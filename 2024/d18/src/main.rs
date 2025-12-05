@@ -79,11 +79,15 @@ fn solver(grid: &Grid) -> Option<usize> {
     None
 }
 
-fn p1(input: &str) -> usize {
+fn p1_with_limit(input: &str, limit: usize) -> usize {
     let coords = parse(input);
-    let grid = create_grid(&coords[..1024]);
+    let grid = create_grid(&coords[..limit]);
 
     solver(&grid).expect("No solution found")
+}
+
+fn p1(input: &str) -> usize {
+    p1_with_limit(input, 1024)
 }
 
 fn binary_search(low: usize, high: usize, coords: &[Position]) -> usize {
@@ -121,4 +125,21 @@ fn main() {
         "p2" => println!("{}", p2(&input)),
         _ => panic!("Invalid part"),
     };
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../eg1.txt");
+
+    #[test]
+    fn test_p1_example() {
+        assert_eq!(p1_with_limit(EXAMPLE, 12), 22);
+    }
+
+    #[test]
+    fn test_p2_example() {
+        assert_eq!(p2(EXAMPLE), "6,1");
+    }
 }

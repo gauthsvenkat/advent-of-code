@@ -25,7 +25,7 @@ create day=("d"+current_day) year=current_year: (_ensure-dir day year)
 	just get-input {{day}} {{year}}
 	just get-example {{day}} {{year}}
 
-# input = {eg, in}
+# input = {eg1, in}
 edit input day=("d"+current_day) year=current_year:
 	@nvim {{year}}/{{day}}/{{input}}.txt
 
@@ -41,7 +41,7 @@ get-example day=("d"+current_day) year=current_year: (_ensure-dir day year)
 		--year {{year}} \
 		--output {{year}}/{{day}}/eg.txt
 
-run input="eg" part="p1" day=("d"+current_day) year=current_year quiet="false":
+run input="eg1" part="p1" day=("d"+current_day) year=current_year quiet="false":
 	cargo run \
 		{{ if quiet == "true" { "--quiet" } else { "" } }} \
 		--manifest-path={{year}}/{{day}}/Cargo.toml \
@@ -63,6 +63,10 @@ submit part="p1" day=("d"+current_day) year=current_year:
 		--part {{part}} \
 		--day {{trim_start_match(day, "d")}} \
 		--year {{year}}
+
+test day=("d"+current_day) year=current_year:
+	cargo test \
+		--manifest-path {{year}}/{{day}}/Cargo.toml
 
 clean-data day=("d"+current_day) year=current_year:
 	rm -f {{year}}/{{day}}/*.txt
