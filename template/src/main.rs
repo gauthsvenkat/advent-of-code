@@ -34,7 +34,7 @@ fn main() {
 mod tests {
     use super::*;
 
-    const EXAMPLE: &str = include_str!("../eg.txt");
+    const EXAMPLE: &str = include_str!("../eg1.txt");
 
     #[test]
     fn test_p1_example() {
