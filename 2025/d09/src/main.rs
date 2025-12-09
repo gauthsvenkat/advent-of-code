@@ -30,8 +30,20 @@ fn p1(input: &str) -> usize {
 }
 
 fn p2(input: &str) -> usize {
-    let parsed_input = parse(input);
-    todo!()
+    let positions = parse(input);
+
+    positions
+        .iter()
+        .tuple_combinations()
+        .filter(|((x1, y1), (x2, y2))| {
+            let p3 = (*x1, *y2);
+            let p4 = (*x2, *y1);
+
+            positions.contains(&p3) && positions.contains(&p4)
+        })
+        .map(|(r1, r2)| area(r1, r2))
+        .max()
+        .unwrap()
 }
 
 fn main() {
