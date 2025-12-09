@@ -3,10 +3,12 @@ use std::collections::HashSet;
 use std::env;
 use std::fs;
 
-type Position = (usize, usize);
-type Positions = HashSet<Position>;
+type Point = (usize, usize);
+type Points = HashSet<Point>;
+type Edge<'a> = (&'a Point, &'a Point);
+type Edges<'a> = HashSet<Edge<'a>>;
 
-fn parse(input: &str) -> Positions {
+fn parse(input: &str) -> Points {
     input
         .lines()
         .map(|l| {
@@ -17,27 +19,7 @@ fn parse(input: &str) -> Positions {
         .collect()
 }
 
-fn display_grid(points: &HashSet<(usize, usize)>) {
-    if points.is_empty() {
-        return;
-    }
-
-    let max_x = points.iter().map(|(x, _)| x).max().unwrap();
-    let max_y = points.iter().map(|(_, y)| y).max().unwrap();
-
-    for y in 0..=*max_y {
-        for x in 0..=*max_x {
-            if points.contains(&(x, y)) {
-                print!("X");
-            } else {
-                print!(".");
-            }
-        }
-        println!();
-    }
-}
-
-fn area((x1, y1): &Position, (x2, y2): &Position) -> usize {
+fn area((x1, y1): &Point, (x2, y2): &Point) -> usize {
     (x1.abs_diff(*x2) + 1) * (y1.abs_diff(*y2) + 1)
 }
 
@@ -50,96 +32,180 @@ fn p1(input: &str) -> usize {
         .unwrap()
 }
 
-fn color_row(start: &Position, end: &Position) -> Positions {
-    let (xs, ys) = start;
-    let (xe, ye) = end;
-
-    if ys != ye {
-        dbg!(start, end);
-        panic!("y coords are not same! start and end are not in the same row");
-    }
-
-    let (xs, xe) = if xs < xe { (xs, xe) } else { (xe, xs) };
-
-    let mut positions = HashSet::new();
-
-    for x in *xs..=*xe {
-        positions.insert((x, *ys));
-    }
-
-    positions
-}
-
-fn color_col(start: &Position, end: &Position) -> Positions {
-    let (xs, ys) = start;
-    let (xe, ye) = end;
-
-    if xs != xe {
-        panic!("x coords are not same! start and end are not in the same column");
-    }
-
-    let (ys, ye) = if ys < ye { (ys, ye) } else { (ye, ys) };
-
-    let mut positions = HashSet::new();
-
-    for y in *ys..=*ye {
-        positions.insert((*xs, y));
-    }
-
-    positions
-}
-
-// fn color(positions: &Positions) -> Positions {
-//     let colored_rows: Positions = positions
-//         .iter()
-//         .tuple_combinations()
-//         .filter(|((_, y1), (_, y2))| y1 == y2)
-//         .flat_map(|(start, end)| color_row(start, end))
-//         .collect();
-//
-//     let colored_columns: Positions = positions
-//         .iter()
-//         .tuple_combinations()
-//         .filter(|((x1, _), (x2, _))| x1 == x2)
-//         .flat_map(|(start, end)| color_col(start, end))
-//         .collect();
-//
-//     let mut colored = HashSet::new();
-//
-//     colored.extend(colored_rows);
-//     colored.extend(colored_columns);
-//
-//     colored
-// }
-
 // Idea:
 // - find outer edges
-// - fn to check if a point is inside the area (point in polygon algo)
+// - fn to check if a point is inside the area (point in polygon algo) TODO:
+//      - Idea:
+//      - a point is inside if its projection in all 4 directions intersect with some edge.
+//          Idea: How to find intersection
+//              - Take the point, project it in a direction and see if there is an edge that
+//              intersects
+// - take all pairs of points (similar to p1), check if the other two points are inside the area
+// (filter), then find the rect
+
+fn get_vertical_edge<'a>(p1: &'a Point, p2: &'a Point) -> Option<Edge<'a>> {
+    //no edge if same point
+    if p1 == p2 {
+        return None;
+    }
+
+    // vertical edge if on same column
+    if p1.0 == p2.0 {
+        return Some((p1, p2));
+    }
+
+    None
+}
+
+fn get_vertical_edges(points: &Points) -> Edges<'_> {
+    points
+        .iter()
+        .tuple_combinations()
+        .filter_map(|(p1, p2)| get_vertical_edge(p1, p2))
+        .collect()
+}
+
+fn is_point_on_edge(p: &Point, edge: &Edge) -> bool {
+    let (p1, p2) = edge;
+
+    // Check if point is on vertical edge (same column)
+    if p.0 == p1.0 {
+        let (min_y, max_y) = (p1.1.min(p2.1), p1.1.max(p2.1));
+        return (min_y..=max_y).contains(&p.1);
+    }
+
+    false
+}
+
+fn is_point_on_any_edge(p: &Point, edges: &Edges) -> bool {
+    for edge in edges {
+        if is_point_on_edge(p, edge) {
+            // println!("{:?} hit edge {:?}", p, edge);
+            return true;
+        }
+    }
+
+    false
+}
+
+fn is_inside(p: &Point, points: &Points) -> bool {
+    // try to go right from the point, keeping track of how
+    // many edges we hit. #edges_hit is even, we're outside
+    // otherwise, we're inside.
+    // Practically, we go all the way till the max x coordinate
+
+    if points.contains(p) {
+        return true;
+    }
+
+    let edges = get_vertical_edges(points);
+
+    if is_point_on_any_edge(p, &edges) {
+        return true;
+    }
+
+    let max_x = edges.iter().map(|(p1, p2)| p1.0.max(p2.0)).max().unwrap();
+    let mut inside = false;
+
+    for xi in p.0..=max_x {
+        if is_point_on_any_edge(&(xi, p.1), &edges) {
+            inside = !inside;
+        }
+    }
+
+    inside
+}
+
+fn display_edges(edges: &Edges) {
+    if edges.is_empty() {
+        return;
+    }
+
+    // Collect all vertices
+    let vertices: HashSet<Point> = edges.iter().flat_map(|(p1, p2)| [**p1, **p2]).collect();
+
+    // Collect all edge points
+    let mut edge_points = HashSet::new();
+    for (p1, p2) in edges {
+        // Add all points between p1 and p2
+        let (x1, y1) = **p1;
+        let (x2, y2) = **p2;
+
+        if x1 == x2 {
+            // Vertical edge
+            let min_y = y1.min(y2);
+            let max_y = y1.max(y2);
+            for y in min_y..=max_y {
+                edge_points.insert((x1, y));
+            }
+        } else if y1 == y2 {
+            // Horizontal edge
+            let min_x = x1.min(x2);
+            let max_x = x1.max(x2);
+            for x in min_x..=max_x {
+                edge_points.insert((x, y1));
+            }
+        }
+    }
+
+    let max_x = vertices.iter().map(|(x, _)| x).max().unwrap();
+    let max_y = vertices.iter().map(|(_, y)| y).max().unwrap();
+
+    for y in 0..=*max_y {
+        for x in 0..=*max_x {
+            if vertices.contains(&(x, y)) {
+                print!("#");
+            } else if edge_points.contains(&(x, y)) {
+                print!("X");
+            } else {
+                print!(".");
+            }
+        }
+        println!();
+    }
+}
 
 fn p2(input: &str) -> usize {
-    let positions = parse(input);
-    // display_grid(&positions);
+    let points = parse(input);
 
-    let colored = color(&positions);
-    display_grid(&colored);
+    let t = points
+        .iter()
+        .tuple_combinations()
+        .filter(|((x1, y1), (x2, y2))| {
+            let p3 = (*x1, *y2);
+            let p4 = (*x2, *y1);
 
-    // let colored = color(colored);
-    // display_grid(&colored);
+            is_inside(&p3, &points) && is_inside(&p4, &points)
+        })
+        .map(|(r1, r2)| (r1, r2, area(r1, r2)))
+        .max_by_key(|x| x.2);
+    dbg!(t);
+    // dbg!(&points);
+    // dbg!(is_inside(&(7, 7), &points));
+
+    // for (p1, p2) in points.iter().tuple_combinations() {
+    //     let (x1, y1) = p1;
+    //     let (x2, y2) = p2;
+    //     let p3 = (*x1, *y2);
+    //     let p4 = (*x2, *y1);
+    //
+    //     if *p1 == (11, 7) && *p2 == (7, 1) {
+    //         println!("{:?}, {:?}, {:?}, {:?} are inside", p1, p2, p3, p4);
+    //
+    //         dbg!(area(p1, p2));
+    //     }
+    //     // if *p1 == (9, 5) && *p2 == (2, 3) {
+    //     //     println!("{:?}, {:?}, {:?}, {:?} are inside", p1, p2, p3, p4);
+    //     //
+    //     //     dbg!(area(p1, p2));
+    //     // }
+    //
+    //     if is_inside(&p3, &points) && is_inside(&p4, &points) {
+    //         // println!("{:?}, {:?}, {:?}, {:?} are inside", p1, p2, p3, p4);
+    //     }
+    // }
 
     todo!()
-
-    // positions
-    //     .iter()
-    //     .tuple_combinations()
-    //     .filter(|((x1, y1), (x2, y2))| {
-    //         let p3 = (*x1, *y2);
-    //         let p4 = (*x2, *y1);
-    //
-    //         positions.contains(&p3) && positions.contains(&p4)
-    //     })
-    //     .map(|(r1, r2)| area(r1, r2))
-    //     .max()
-    //     .unwrap()
 }
 
 fn main() {
