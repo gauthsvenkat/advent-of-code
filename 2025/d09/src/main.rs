@@ -1,10 +1,11 @@
 use itertools::Itertools;
+use std::collections::HashSet;
 use std::env;
 use std::fs;
 
 type Position = (usize, usize);
 
-fn parse(input: &str) -> Vec<Position> {
+fn parse(input: &str) -> HashSet<Position> {
     input
         .lines()
         .map(|l| {
