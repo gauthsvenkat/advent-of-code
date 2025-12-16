@@ -45,6 +45,7 @@ run input="eg1" part="p1" day=("d"+current_day) year=current_year quiet="false":
 	cargo run \
 		{{ if quiet == "true" { "--quiet" } else { "" } }} \
 		--manifest-path={{year}}/{{day}}/Cargo.toml \
+		{{ if input == "in" { "--release" } else { "" } }} \
 		-- {{part}} {{year}}/{{day}}/{{input}}.txt
 
 show-input day=("d"+current_day) year=current_year:
