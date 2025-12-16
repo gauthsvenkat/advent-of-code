@@ -642,6 +642,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "y2025-d09"
+version = "0.1.0"
+dependencies = [
+ "itertools",
+]
+
+[[package]]
 name = "y2025-d11"
 version = "0.1.0"
 dependencies = [
