@@ -33,8 +33,13 @@
               uv
 
               z3
+              llvmPackages.libclang.lib
             ]
             ++ lib.optional stdenv.isDarwin libiconv;
+
+            env = lib.optionalAttrs stdenv.isLinux {
+              LIBCLANG_PATH = "${llvmPackages.libclang.lib}/lib";
+            };
           };
       }
     );
