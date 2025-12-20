@@ -50,11 +50,6 @@ fn p1(input: &str) -> usize {
     fit_count
 }
 
-fn p2(input: &str) -> usize {
-    let _parsed_input = parse(input);
-    todo!()
-}
-
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -65,7 +60,6 @@ fn main() {
 
     match part.as_str() {
         "p1" => println!("{}", p1(&input)),
-        "p2" => println!("{}", p2(&input)),
         _ => panic!("Invalid part"),
     };
 }
