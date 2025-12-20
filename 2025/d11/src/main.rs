@@ -1,3 +1,4 @@
+#[cfg_attr(test, allow(unused_imports))]
 use cached::proc_macro::cached;
 use std::collections::{HashMap, HashSet};
 use std::env;
@@ -23,56 +24,47 @@ fn parse(input: &str) -> Connections {
         .collect()
 }
 
-fn count_you_to_out(current_device: &str, connections: &Connections) -> usize {
-    if current_device == "out" {
+// NOTE: The cache is global. Therefore, during testing the cache is polluted by the other part's
+// solution, for both parts. So it is conditionally disabled for `test` compilation.
+#[cfg_attr(
+    not(test),
+    cached(key = "String", convert = r#"{ format!("{}-{}", from, to) }"#)
+)]
+fn count_paths(from: &str, to: &str, connections: &Connections) -> usize {
+    if from == to {
         return 1;
     }
 
+    if from == "out" {
+        return 0;
+    }
+
     connections
-        .get(current_device)
+        .get(from)
         .unwrap()
         .iter()
-        .map(|d| count_you_to_out(d, connections))
+        .map(|d| count_paths(d, to, connections))
         .sum()
 }
 
 fn p1(input: &str) -> usize {
     let connections = parse(input);
-    count_you_to_out("you", &connections)
-}
-
-#[cached(
-    key = "String",
-    convert = r#"{ format!("{}-{}-{}", current_device, touched_dac, touched_fft) }"#
-)]
-fn count_svr_to_out(
-    current_device: &str,
-    connections: &Connections,
-    touched_dac: bool,
-    touched_fft: bool,
-) -> usize {
-    if current_device == "out" {
-        return (touched_dac && touched_fft) as usize;
-    }
-
-    connections
-        .get(current_device)
-        .unwrap()
-        .iter()
-        .map(|d| {
-            count_svr_to_out(
-                d,
-                connections,
-                touched_dac || (current_device == "dac"),
-                touched_fft || (current_device == "fft"),
-            )
-        })
-        .sum()
+    count_paths("you", "out", &connections)
 }
 
 fn p2(input: &str) -> usize {
     let connections = parse(input);
-    count_svr_to_out("svr", &connections, false, false)
+
+    let num_svr_fft_dac_out = count_paths("svr", "fft", &connections)
+        * count_paths("fft", "dac", &connections)
+        * count_paths("dac", "out", &connections);
+    let num_svr_dac_fft_out = count_paths("svr", "dac", &connections)
+        * count_paths("dac", "fft", &connections)
+        * count_paths("fft", "out", &connections);
+
+    // NOTE: Since the input is a DAG, one of these terms will be 0.
+    // (it is the second one (dac -> fft) in my case)
+    num_svr_fft_dac_out + num_svr_dac_fft_out
 }
 
 fn main() {
