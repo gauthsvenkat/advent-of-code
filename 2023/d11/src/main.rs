@@ -90,7 +90,7 @@ fn p1(input: &str) -> usize {
     r
 }
 
-fn p2(input: &str) -> usize {
+fn p2(input: &str, expansion_factor: usize) -> usize {
     let image = parse(input);
     let galaxy_locations = find_galaxies(&image);
     let num_galaxies = galaxy_locations.len();
@@ -106,7 +106,7 @@ fn p2(input: &str) -> usize {
                 &empty_cols,
                 &galaxy_locations[i],
                 &galaxy_locations[j],
-                1000000,
+                expansion_factor,
             );
         }
     }
@@ -124,7 +124,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => println!("{}", p1(&input)),
-        "p2" => println!("{}", p2(&input)),
+        "p2" => println!("{}", p2(&input, 1000000)),
         _ => panic!("Invalid part"),
     };
 }
@@ -140,7 +140,10 @@ mod tests {
         assert_eq!(p1(EXAMPLE), 374);
     }
 
-    // Note: p2 uses expansion factor of 1000000 for the actual puzzle,
-    // but the example would need factor 100 to get answer 8410.
-    // Since p2 hardcodes the factor, we can't directly test it with the example.
+    #[test]
+    fn test_p2_example() {
+        // p2 uses expansion factor of 1000000 for actual puzzle,
+        // but example uses factor 100
+        assert_eq!(p2(EXAMPLE, 100), 8410);
+    }
 }
