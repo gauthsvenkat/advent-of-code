@@ -138,7 +138,7 @@ fn p2(input: &str) -> usize {
     let (positions, velocities) = parse(input);
     let grid_dims = find_grid_size(&positions);
 
-    for second in 1000..10000 {
+    for second in 0..10000 {
         let render = render_positions(
             grid_dims,
             &positions
@@ -149,12 +149,11 @@ fn p2(input: &str) -> usize {
         );
 
         if has_full_3x3_block(&render) {
-            println!("{}", render);
             return second + 1;
         }
     }
 
-    0
+    unreachable!("On the real input, answer should have been found using the above heuristic.")
 }
 
 fn main() {
