@@ -131,7 +131,7 @@ mod tests {
     const EXAMPLE: &str = include_str!("../eg1.txt");
 
     #[test]
-    #[ignore] //TODO: Need to find a general solution :(
+    #[ignore = "Example requires NP-hard bin-packing solution; actual input works with simple area heuristic"]
     fn test_p1_example() {
         assert_eq!(p1(EXAMPLE), 2);
     }
