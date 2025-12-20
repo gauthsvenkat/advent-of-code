@@ -76,7 +76,7 @@ fn solver(maze: &Maze, start_position: Position, start_direction: Direction) -> 
             if score == bs {
                 continue;
             } else {
-                return (score, best_seats.len());
+                return (bs, best_seats.len());
             }
         }
 
@@ -139,13 +139,11 @@ mod tests {
     const EXAMPLE2: &str = include_str!("../eg2.txt");
 
     #[test]
-    #[ignore] // TODO: fix regression. expected 7036, got 8015
     fn test_p1_example1() {
         assert_eq!(p1(EXAMPLE1), 7036);
     }
 
     #[test]
-    #[ignore] // TODO: fix regression. expected 11048, got 12031
     fn test_p1_example2() {
         assert_eq!(p1(EXAMPLE2), 11048);
     }
