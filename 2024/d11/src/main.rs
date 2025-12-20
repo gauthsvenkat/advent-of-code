@@ -78,4 +78,9 @@ mod tests {
     fn test_p1_example() {
         assert_eq!(p1(EXAMPLE), 55312);
     }
+
+    #[test]
+    fn test_p2_example() {
+        assert_eq!(p2(EXAMPLE), 65601038650482);
+    }
 }
