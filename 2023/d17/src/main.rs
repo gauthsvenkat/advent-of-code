@@ -55,7 +55,7 @@ fn travel(
 
         seen.insert((i, j, di, dj, n));
 
-        if (i, j) == (map.n_rows - 1, map.n_cols - 1) {
+        if (i, j) == (map.n_rows - 1, map.n_cols - 1) && n >= min_consecutive_blocks {
             return -cost;
         }
 
@@ -66,7 +66,10 @@ fn travel(
         }
 
         for (ndi, ndj) in [(0, -1), (1, 0), (-1, 0), (0, 1)] {
-            if (ndi, ndj) == (di, dj) || (ndi, ndj) == (-di, -dj) || n < min_consecutive_blocks {
+            if (ndi, ndj) == (di, dj)
+                || (ndi, ndj) == (-di, -dj)
+                || ((di, dj) != (0, 0) && n < min_consecutive_blocks)
+            {
                 continue;
             }
 
@@ -108,16 +111,21 @@ fn main() {
 mod tests {
     use super::*;
 
-    const EXAMPLE: &str = include_str!("../eg1.txt");
+    const EXAMPLE1: &str = include_str!("../eg1.txt");
+    const EXAMPLE2: &str = include_str!("../eg2.txt");
 
     #[test]
     fn test_p1_example() {
-        assert_eq!(p1(EXAMPLE), 102);
+        assert_eq!(p1(EXAMPLE1), 102);
     }
 
     #[test]
-    #[ignore] // TODO:
-    fn test_p2_example() {
-        assert_eq!(p2(EXAMPLE), 71);
+    fn test_p2_example1() {
+        assert_eq!(p2(EXAMPLE1), 94);
+    }
+
+    #[test]
+    fn test_p2_example2() {
+        assert_eq!(p2(EXAMPLE2), 71);
     }
 }
