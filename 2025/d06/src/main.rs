@@ -130,7 +130,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore] //TODO: fix this
     fn test_p2_example() {
         assert_eq!(p2(EXAMPLE), 3263827);
     }

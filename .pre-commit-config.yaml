@@ -3,9 +3,12 @@ repos:
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
+        exclude: '\.txt$'
       - id: end-of-file-fixer
+        exclude: '\.txt$'
       - id: check-added-large-files
       - id: mixed-line-ending
+        exclude: '\.txt$'
   - repo: local
     hooks:
       - id: cargo-fmt
