@@ -106,7 +106,7 @@ fn cheats(solution: &Path, lasting: usize) -> HashMap<(Position, Position), usiz
     cheat_savings
 }
 
-fn p1_with_threshold(input: &str, threshold: usize) -> usize {
+fn p1(input: &str, threshold: usize) -> usize {
     let maze = parse(input);
     let start = find_start(&maze);
 
@@ -126,11 +126,7 @@ fn p1_with_threshold(input: &str, threshold: usize) -> usize {
         .count()
 }
 
-fn p1(input: &str) -> usize {
-    p1_with_threshold(input, 100)
-}
-
-fn p2_with_threshold(input: &str, threshold: usize) -> usize {
+fn p2(input: &str, threshold: usize) -> usize {
     let maze = parse(input);
     let start = find_start(&maze);
 
@@ -150,10 +146,6 @@ fn p2_with_threshold(input: &str, threshold: usize) -> usize {
         .count()
 }
 
-fn p2(input: &str) -> usize {
-    p2_with_threshold(input, 100)
-}
-
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -163,8 +155,8 @@ fn main() {
     let input = fs::read_to_string(filepath).unwrap();
 
     match part.as_str() {
-        "p1" => println!("{}", p1(&input)),
-        "p2" => println!("{}", p2(&input)),
+        "p1" => println!("{}", p1(&input, 100)),
+        "p2" => println!("{}", p2(&input, 100)),
         _ => panic!("Invalid part"),
     };
 }
@@ -177,11 +169,11 @@ mod tests {
 
     #[test]
     fn test_p1_example() {
-        assert_eq!(p1_with_threshold(EXAMPLE, 1), 44);
+        assert_eq!(p1(EXAMPLE, 1), 44);
     }
 
     #[test]
     fn test_p2_example() {
-        assert_eq!(p2_with_threshold(EXAMPLE, 50), 285);
+        assert_eq!(p2(EXAMPLE, 50), 285);
     }
 }
