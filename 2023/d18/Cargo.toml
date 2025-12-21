@@ -1,0 +1,7 @@
+[package]
+name = "y2023-d18"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+itertools = "0.14.0"
