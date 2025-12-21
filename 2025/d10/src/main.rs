@@ -1,3 +1,4 @@
+use rayon::prelude::*;
 use std::env;
 use std::fs;
 use z3::{ast::Int, Optimize, SatResult::Sat};
@@ -124,7 +125,7 @@ fn p1(input: &str) -> usize {
     let machine_specs = parse(input);
 
     machine_specs
-        .iter()
+        .par_iter()
         .map(|m| optimize(&m.indicator_lights, &m.buttons, false))
         .sum()
 }
@@ -133,7 +134,7 @@ fn p2(input: &str) -> usize {
     let machine_specs = parse(input);
 
     machine_specs
-        .iter()
+        .par_iter()
         .map(|m| optimize(&m.joltages, &m.buttons, true))
         .sum()
 }
