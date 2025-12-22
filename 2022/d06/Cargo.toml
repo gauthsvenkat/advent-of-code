@@ -1,0 +1,6 @@
+[package]
+name = "y2022-d06"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
