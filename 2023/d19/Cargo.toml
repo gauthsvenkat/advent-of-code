@@ -1,0 +1,6 @@
+[package]
+name = "y2023-d19"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
