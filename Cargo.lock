@@ -696,6 +696,10 @@ name = "y2022-d09"
 version = "0.1.0"
 
 [[package]]
+name = "y2022-d10"
+version = "0.1.0"
+
+[[package]]
 name = "y2023-d01"
 version = "0.1.0"
 
