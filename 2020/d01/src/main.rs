@@ -51,12 +51,12 @@ mod tests {
     const EXAMPLE: &str = include_str!("../eg1.txt");
 
     #[test]
-    fn test_p1_example() {
+    fn test_p1() {
         assert_eq!(p1(EXAMPLE), 514579);
     }
 
     #[test]
-    fn test_p2_example() {
+    fn test_p2() {
         assert_eq!(p2(EXAMPLE), 241861950);
     }
 }

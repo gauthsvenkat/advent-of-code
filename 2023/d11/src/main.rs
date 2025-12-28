@@ -134,12 +134,12 @@ mod tests {
     const EXAMPLE: &str = include_str!("../eg1.txt");
 
     #[test]
-    fn test_p1_example() {
+    fn test_p1() {
         assert_eq!(p1(EXAMPLE), 374);
     }
 
     #[test]
-    fn test_p2_example() {
+    fn test_p2() {
         // p2 uses expansion factor of 1000000 for actual puzzle,
         // but example uses factor 100
         assert_eq!(p2(EXAMPLE, 100), 8410);

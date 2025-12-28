@@ -176,7 +176,7 @@ mod tests {
     const EXAMPLE: &str = include_str!("../eg1.txt");
 
     #[test]
-    fn test_p1_example() {
+    fn test_p1() {
         assert_eq!(p1(EXAMPLE), 12);
     }
 }

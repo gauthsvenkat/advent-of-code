@@ -36,13 +36,13 @@ mod tests {
     const EXAMPLE: &str = include_str!("../eg1.txt");
 
     #[test]
-    fn test_p1_example() {
+    fn test_p1() {
         // TODO:
         assert_eq!(p1(EXAMPLE), 0);
     }
 
     #[test]
-    fn test_p2_example() {
+    fn test_p2() {
         // TODO:
         assert_eq!(p2(EXAMPLE), 0);
     }

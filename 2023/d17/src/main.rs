@@ -116,17 +116,13 @@ mod tests {
     const EXAMPLE2: &str = include_str!("../eg2.txt");
 
     #[test]
-    fn test_p1_example() {
+    fn test_p1() {
         assert_eq!(p1(EXAMPLE1), 102);
     }
 
     #[test]
-    fn test_p2_example1() {
+    fn test_p2() {
         assert_eq!(p2(EXAMPLE1), 94);
-    }
-
-    #[test]
-    fn test_p2_example2() {
         assert_eq!(p2(EXAMPLE2), 71);
     }
 }

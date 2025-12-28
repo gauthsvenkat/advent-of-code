@@ -175,18 +175,14 @@ mod tests {
     const EXAMPLE3: &str = include_str!("../eg3.txt");
 
     #[test]
-    fn test_p1_example1() {
+    fn test_p1() {
         assert_eq!(p1(EXAMPLE1), 4);
-    }
-
-    #[test]
-    fn test_p1_example2() {
         assert_eq!(p1(EXAMPLE2), 2024);
     }
 
     #[test]
     #[ignore = "No general solution - requires manual circuit analysis for each input"]
-    fn test_p2_example() {
+    fn test_p2() {
         assert_eq!(p2(EXAMPLE3), "z00,z01,z02,z05");
     }
 }

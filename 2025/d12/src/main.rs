@@ -131,7 +131,7 @@ mod tests {
 
     #[test]
     #[ignore = "Example requires NP-hard bin-packing solution; actual input works with simple area heuristic"]
-    fn test_p1_example() {
+    fn test_p1() {
         assert_eq!(p1(EXAMPLE), 2);
     }
 }

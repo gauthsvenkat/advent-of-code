@@ -277,42 +277,18 @@ mod tests {
     const EXAMPLE5: &str = include_str!("../eg5.txt");
 
     #[test]
-    fn test_p1_example1() {
+    fn test_p1() {
         assert_eq!(p1(EXAMPLE1), 140);
-    }
-
-    #[test]
-    fn test_p2_example1() {
-        assert_eq!(p2(EXAMPLE1), 80);
-    }
-
-    #[test]
-    fn test_p1_example2() {
         assert_eq!(p1(EXAMPLE2), 772);
-    }
-
-    #[test]
-    fn test_p2_example2() {
-        assert_eq!(p2(EXAMPLE2), 436);
-    }
-
-    #[test]
-    fn test_p1_example3() {
         assert_eq!(p1(EXAMPLE3), 1930);
     }
 
     #[test]
-    fn test_p2_example3() {
+    fn test_p2() {
+        assert_eq!(p2(EXAMPLE1), 80);
+        assert_eq!(p2(EXAMPLE2), 436);
         assert_eq!(p2(EXAMPLE3), 1206);
-    }
-
-    #[test]
-    fn test_p2_example4() {
         assert_eq!(p2(EXAMPLE4), 236);
-    }
-
-    #[test]
-    fn test_p2_example5() {
         assert_eq!(p2(EXAMPLE5), 368);
     }
 }

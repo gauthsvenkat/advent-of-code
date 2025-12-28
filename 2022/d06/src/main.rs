@@ -53,7 +53,7 @@ mod tests {
     const EXAMPLE5: &str = include_str!("../eg5.txt");
 
     #[test]
-    fn test_p1_example() {
+    fn test_p1() {
         assert_eq!(p1(EXAMPLE1), 7);
         assert_eq!(p1(EXAMPLE2), 5);
         assert_eq!(p1(EXAMPLE3), 6);
@@ -62,7 +62,7 @@ mod tests {
     }
 
     #[test]
-    fn test_p2_example() {
+    fn test_p2() {
         assert_eq!(p2(EXAMPLE1), 19);
         assert_eq!(p2(EXAMPLE2), 23);
         assert_eq!(p2(EXAMPLE3), 23);
