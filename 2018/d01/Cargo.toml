@@ -1,0 +1,6 @@
+[package]
+name = "y2018-d01"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
