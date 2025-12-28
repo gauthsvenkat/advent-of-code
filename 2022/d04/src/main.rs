@@ -1,6 +1,4 @@
-use std::env;
-use std::fs;
-use std::ops::RangeInclusive;
+use std::{env, fs, ops::RangeInclusive};
 
 type IDRange = RangeInclusive<usize>;
 

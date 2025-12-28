@@ -1,7 +1,4 @@
-use std::cmp::Ordering;
-use std::collections::HashMap;
-use std::env;
-use std::fs;
+use std::{cmp::Ordering, collections::HashMap, env, fs};
 
 struct CamelCard {
     hand: String,

@@ -1,6 +1,5 @@
 use cached::proc_macro::cached;
-use std::env;
-use std::fs;
+use std::{env, fs};
 
 fn parse(input: &str) -> Vec<usize> {
     input

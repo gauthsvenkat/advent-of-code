@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-use std::env;
-use std::fs;
+use std::{collections::HashMap, env, fs};
 
 fn parse(input: &str) -> (Vec<String>, Vec<String>) {
     let groups: Vec<&str> = input.split("\n\n").collect();

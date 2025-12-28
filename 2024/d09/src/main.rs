@@ -1,5 +1,4 @@
-use std::env;
-use std::fs;
+use std::{env, fs};
 
 fn readfile(filepath: &str) -> String {
     fs::read_to_string(filepath).unwrap()

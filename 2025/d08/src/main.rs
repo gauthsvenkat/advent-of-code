@@ -1,7 +1,8 @@
 use itertools::Itertools;
-use std::collections::{BTreeSet, HashMap};
-use std::env;
-use std::fs;
+use std::{
+    collections::{BTreeSet, HashMap},
+    env, fs,
+};
 
 type Point = (usize, usize, usize);
 type Circuit<'a> = BTreeSet<&'a Point>;

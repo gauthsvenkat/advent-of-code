@@ -1,6 +1,7 @@
-use std::collections::{BTreeMap, HashSet};
-use std::env;
-use std::fs;
+use std::{
+    collections::{BTreeMap, HashSet},
+    env, fs,
+};
 
 type Numbers = HashSet<usize>;
 type Cards = BTreeMap<usize, (Numbers, Numbers)>;

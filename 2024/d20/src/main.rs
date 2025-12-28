@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-use std::env;
-use std::fs;
+use std::{collections::HashMap, env, fs};
 
 type Maze = Vec<Vec<char>>;
 type Position = (usize, usize);

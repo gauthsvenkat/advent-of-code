@@ -1,7 +1,5 @@
 use indexmap::IndexMap;
-use std::collections::BTreeMap;
-use std::env;
-use std::fs;
+use std::{collections::BTreeMap, env, fs};
 
 enum Operation {
     Equals(String, usize),

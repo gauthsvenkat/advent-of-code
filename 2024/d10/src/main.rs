@@ -1,6 +1,4 @@
-use std::collections::HashSet;
-use std::env;
-use std::fs;
+use std::{collections::HashSet, env, fs};
 
 type Position = (usize, usize);
 type Path = Vec<Position>;

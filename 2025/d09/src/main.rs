@@ -1,7 +1,8 @@
 use itertools::Itertools;
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
-use std::env;
-use std::fs;
+use std::{
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
+    env, fs,
+};
 
 type Point = (usize, usize);
 

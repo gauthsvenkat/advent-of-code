@@ -1,6 +1,7 @@
-use std::collections::{BTreeSet, HashMap, HashSet};
-use std::env;
-use std::fs;
+use std::{
+    collections::{BTreeSet, HashMap, HashSet},
+    env, fs,
+};
 
 fn parse(input: &str) -> HashMap<String, HashSet<String>> {
     let mut network: HashMap<String, HashSet<String>> = HashMap::new();

@@ -1,6 +1,5 @@
 use rayon::prelude::*;
-use std::env;
-use std::fs;
+use std::{env, fs};
 use z3::{ast::Int, Optimize, SatResult::Sat};
 
 type IntVec = Vec<u64>;

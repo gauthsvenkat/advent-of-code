@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-use std::env;
-use std::fs;
+use std::{collections::HashMap, env, fs};
 
 fn parse(input: &str) -> (Vec<i32>, Vec<i32>) {
     let mut l1: Vec<i32> = Vec::new();

@@ -1,7 +1,4 @@
-use std::collections::HashSet;
-use std::env;
-use std::fs;
-use std::ops::Div;
+use std::{collections::HashSet, env, fs, ops::Div};
 
 fn parse(input: &str) -> Vec<(char, usize)> {
     input

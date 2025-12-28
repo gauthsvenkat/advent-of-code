@@ -1,8 +1,5 @@
-use std::collections::HashSet;
-use std::env;
-use std::fs;
-
 use itertools::Itertools;
+use std::{collections::HashSet, env, fs};
 
 type Food = HashSet<usize>;
 

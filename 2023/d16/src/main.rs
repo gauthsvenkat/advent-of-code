@@ -1,6 +1,7 @@
-use std::collections::{HashMap, HashSet};
-use std::env;
-use std::fs;
+use std::{
+    collections::{HashMap, HashSet},
+    env, fs,
+};
 
 struct Map {
     grid: Vec<Vec<char>>,

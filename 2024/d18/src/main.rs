@@ -1,7 +1,8 @@
-use std::cmp::Reverse;
-use std::collections::{BinaryHeap, HashSet};
-use std::env;
-use std::fs;
+use std::{
+    cmp::Reverse,
+    collections::{BinaryHeap, HashSet},
+    env, fs,
+};
 
 type Position = (usize, usize);
 type Grid = Vec<Vec<char>>;

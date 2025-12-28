@@ -1,5 +1,4 @@
-use std::env;
-use std::fs;
+use std::{env, fs};
 
 fn parse(input: &str) -> Vec<Vec<i32>> {
     let mut reports: Vec<Vec<i32>> = Vec::new();

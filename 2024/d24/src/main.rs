@@ -1,7 +1,8 @@
 use regex::Regex;
-use std::collections::{BTreeMap, VecDeque};
-use std::env;
-use std::fs;
+use std::{
+    collections::{BTreeMap, VecDeque},
+    env, fs,
+};
 
 type Bits = BTreeMap<String, bool>;
 type Gate = (String, String, String);

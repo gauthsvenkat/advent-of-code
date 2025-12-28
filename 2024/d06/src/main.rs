@@ -1,6 +1,7 @@
-use std::collections::{HashMap, HashSet};
-use std::env;
-use std::fs;
+use std::{
+    collections::{HashMap, HashSet},
+    env, fs,
+};
 
 fn parse(input: &str) -> Vec<Vec<char>> {
     input

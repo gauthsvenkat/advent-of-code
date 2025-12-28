@@ -1,6 +1,4 @@
-use std::collections::BTreeMap;
-use std::env;
-use std::fs;
+use std::{collections::BTreeMap, env, fs};
 
 fn parse(input: &str) -> BTreeMap<usize, Vec<(usize, usize, usize)>> {
     let mut games = BTreeMap::new();

@@ -1,8 +1,9 @@
 #[cfg_attr(test, allow(unused_imports))]
 use cached::proc_macro::cached;
-use std::collections::{HashMap, HashSet};
-use std::env;
-use std::fs;
+use std::{
+    collections::{HashMap, HashSet},
+    env, fs,
+};
 
 type Outputs = HashSet<String>;
 type Connections = HashMap<String, Outputs>;

@@ -1,8 +1,8 @@
 use cached::proc_macro::cached;
-use std::collections::HashMap;
-use std::collections::HashSet;
-use std::env;
-use std::fs;
+use std::{
+    collections::{HashMap, HashSet},
+    env, fs,
+};
 
 type Position = (usize, usize);
 type Grid = HashMap<Position, char>;

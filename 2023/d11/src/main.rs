@@ -1,6 +1,4 @@
-use std::collections::HashSet;
-use std::env;
-use std::fs;
+use std::{collections::HashSet, env, fs};
 
 type Image = Vec<Vec<char>>;
 type Point = (usize, usize);

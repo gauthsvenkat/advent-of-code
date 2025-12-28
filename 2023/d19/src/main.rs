@@ -1,7 +1,8 @@
-use std::collections::{HashMap, HashSet};
-use std::env;
-use std::fs;
-use std::ops::RangeInclusive;
+use std::{
+    collections::{HashMap, HashSet},
+    env, fs,
+    ops::RangeInclusive,
+};
 
 #[derive(Debug)]
 enum Rule<'a> {

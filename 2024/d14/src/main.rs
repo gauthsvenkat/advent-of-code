@@ -1,7 +1,5 @@
 use regex::Regex;
-use std::collections::HashMap;
-use std::env;
-use std::fs;
+use std::{collections::HashMap, env, fs};
 
 type Position = (u32, u32);
 type Velocity = (i32, i32);

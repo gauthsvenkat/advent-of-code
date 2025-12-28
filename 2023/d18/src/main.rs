@@ -1,7 +1,5 @@
 use itertools::Itertools;
-use std::env;
-use std::fs;
-use std::ops::Div;
+use std::{env, fs, ops::Div};
 
 #[derive(Debug, Clone, Copy)]
 enum Direction {

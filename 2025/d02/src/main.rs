@@ -1,6 +1,4 @@
-use std::env;
-use std::fs;
-use std::panic;
+use std::{env, fs, panic};
 
 fn parse(input: &str) -> Vec<(usize, usize)> {
     input

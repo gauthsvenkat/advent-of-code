@@ -1,6 +1,4 @@
-use std::collections::HashSet;
-use std::env;
-use std::fs;
+use std::{collections::HashSet, env, fs};
 
 fn parse(input: &str) -> Vec<String> {
     input.lines().map(|line| line.to_string()).collect()

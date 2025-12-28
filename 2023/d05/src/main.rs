@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-use std::env;
-use std::fs;
+use std::{collections::HashMap, env, fs};
 
 type Map = Vec<(usize, usize, usize)>;
 type Maps = HashMap<String, Map>;

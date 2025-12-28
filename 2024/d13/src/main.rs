@@ -1,6 +1,5 @@
 use regex::Regex;
-use std::env;
-use std::fs;
+use std::{env, fs};
 
 type Button = (i64, i64);
 type Prize = (i64, i64);

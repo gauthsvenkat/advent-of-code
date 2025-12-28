@@ -1,8 +1,8 @@
-use std::cmp::Reverse;
-use std::collections::{BinaryHeap, HashMap};
-use std::env;
-use std::fs;
-use std::iter;
+use std::{
+    cmp::Reverse,
+    collections::{BinaryHeap, HashMap},
+    env, fs, iter,
+};
 
 fn parse(input: &str) -> Vec<String> {
     input.lines().map(|s| s.to_string()).collect()

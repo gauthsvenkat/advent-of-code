@@ -1,6 +1,7 @@
-use std::collections::{BTreeMap, VecDeque};
-use std::env;
-use std::fs;
+use std::{
+    collections::{BTreeMap, VecDeque},
+    env, fs,
+};
 
 #[allow(clippy::ptr_arg)]
 fn transpose(matrix: &Vec<Vec<char>>) -> Vec<Vec<char>> {

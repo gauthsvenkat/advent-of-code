@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-use std::env;
-use std::fs;
+use std::{collections::HashMap, env, fs};
 
 fn parse(input: &str) -> HashMap<u64, Vec<u64>> {
     let mut equations: HashMap<u64, Vec<u64>> = HashMap::new();

@@ -1,6 +1,5 @@
 use cached::{proc_macro::cached, UnboundCache};
-use std::env;
-use std::fs;
+use std::{env, fs};
 
 struct Springs {
     record: String,

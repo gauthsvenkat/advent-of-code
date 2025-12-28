@@ -1,6 +1,5 @@
 use regex::Regex;
-use std::env;
-use std::fs;
+use std::{env, fs};
 
 fn p1(input: &str) -> i32 {
     let mut sol: i32 = 0;

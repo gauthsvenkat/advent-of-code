@@ -1,5 +1,4 @@
-use std::env;
-use std::fs;
+use std::{env, fs};
 
 fn parse(input: &str) -> (Vec<Vec<u8>>, Vec<Vec<u8>>) {
     let mut locks: Vec<Vec<u8>> = Vec::new();
