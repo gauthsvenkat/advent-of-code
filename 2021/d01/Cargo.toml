@@ -1,0 +1,7 @@
+[package]
+name = "y2021-d01"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+itertools = "0.14.0"
