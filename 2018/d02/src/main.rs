@@ -98,6 +98,6 @@ mod tests {
 
     #[test]
     fn test_p2() {
-        assert_eq!(p2(EXAMPLE2), "fgij".to_string());
+        assert_eq!(p2(EXAMPLE2), "fgij");
     }
 }

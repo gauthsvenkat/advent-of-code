@@ -112,11 +112,11 @@ mod tests {
 
     #[test]
     fn test_p1() {
-        assert_eq!(p1(EXAMPLE), "1985".to_string());
+        assert_eq!(p1(EXAMPLE), "1985");
     }
 
     #[test]
     fn test_p2() {
-        assert_eq!(p2(EXAMPLE), "5DB3".to_string());
+        assert_eq!(p2(EXAMPLE), "5DB3");
     }
 }
