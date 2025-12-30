@@ -1,0 +1,8 @@
+[package]
+name = "y2015-d04"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+md-5 = "0.10.6"
+rayon = "1.11.0"
