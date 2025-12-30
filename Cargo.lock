@@ -702,6 +702,10 @@ name = "y2019-d01"
 version = "0.1.0"
 
 [[package]]
+name = "y2019-d02"
+version = "0.1.0"
+
+[[package]]
 name = "y2020-d01"
 version = "0.1.0"
 dependencies = [
