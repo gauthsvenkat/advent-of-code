@@ -1,0 +1,9 @@
+[package]
+name = "y2016-d05"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+itertools = "0.14.0"
+md-5 = "0.10.6"
+rayon = "1.11.0"

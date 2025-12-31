@@ -748,6 +748,15 @@ name = "y2016-d04"
 version = "0.1.0"
 
 [[package]]
+name = "y2016-d05"
+version = "0.1.0"
+dependencies = [
+ "itertools 0.14.0",
+ "md-5",
+ "rayon",
+]
+
+[[package]]
 name = "y2017-d01"
 version = "0.1.0"
 dependencies = [
