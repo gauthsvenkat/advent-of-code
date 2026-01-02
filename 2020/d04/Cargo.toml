@@ -1,0 +1,6 @@
+[package]
+name = "y2020-d04"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
