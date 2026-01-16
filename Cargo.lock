@@ -833,6 +833,10 @@ name = "y2020-d05"
 version = "0.1.0"
 
 [[package]]
+name = "y2020-d06"
+version = "0.1.0"
+
+[[package]]
 name = "y2021-d01"
 version = "0.1.0"
 dependencies = [
